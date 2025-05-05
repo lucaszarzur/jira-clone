@@ -1,18 +1,25 @@
-<div class="p-10">
-    <content-loader [backgroundColor]="'#f3f3f3'" [foregroundColor]="'#ecebeb'" [viewBox]="'0 0 940 300'">
-        <svg:rect x="0" y="0" rx="3" ry="3" width="627" height="24" />
-        <svg:rect x="0" y="29" rx="3" ry="3" width="506" height="24" />
-        <svg:rect x="0" y="77" rx="3" ry="3" width="590" height="16" />
-        <svg:rect x="0" y="100" rx="3" ry="3" width="627" height="16" />
-        <svg:rect x="0" y="123" rx="3" ry="3" width="480" height="16" />
-        <svg:rect x="0" y="187" rx="3" ry="3" width="370" height="16" />
-        <svg:circle cx="18" cy="239" r="18" />
-        <svg:rect x="46" y="217" rx="3" ry="3" width="548" height="42" />
-        <svg:rect x="683" y="3" rx="3" ry="3" width="135" height="14" />
-        <svg:rect x="683" y="33" rx="3" ry="3" width="251" height="24" />
-        <svg:rect x="683" y="90" rx="3" ry="3" width="135" height="14" />
-        <svg:rect x="683" y="120" rx="3" ry="3" width="251" height="24" />
-        <svg:rect x="683" y="177" rx="3" ry="3" width="135" height="14" />
-        <svg:rect x="683" y="207" rx="3" ry="3" width="251" height="24" />
-    </content-loader>
+<div class="p-10 issue-loader-container">
+    <app-simple-loader [width]="940" [height]="50"></app-simple-loader>
+    <app-simple-loader [width]="800" [height]="50" class="mt-4"></app-simple-loader>
+    <app-simple-loader [width]="600" [height]="30" class="mt-6"></app-simple-loader>
+    <app-simple-loader [width]="700" [height]="30" class="mt-3"></app-simple-loader>
+    <app-simple-loader [width]="500" [height]="30" class="mt-3"></app-simple-loader>
+    
+    <div class="flex mt-8">
+        <div class="w-2/3 pr-4">
+            <app-simple-loader [width]="500" [height]="30"></app-simple-loader>
+            <div class="flex items-center mt-4">
+                <div class="circle-loader"></div>
+                <app-simple-loader [width]="400" [height]="42" class="ml-4"></app-simple-loader>
+            </div>
+        </div>
+        <div class="w-1/3">
+            <app-simple-loader [width]="135" [height]="14"></app-simple-loader>
+            <app-simple-loader [width]="251" [height]="24" class="mt-3"></app-simple-loader>
+            <app-simple-loader [width]="135" [height]="14" class="mt-6"></app-simple-loader>
+            <app-simple-loader [width]="251" [height]="24" class="mt-3"></app-simple-loader>
+            <app-simple-loader [width]="135" [height]="14" class="mt-6"></app-simple-loader>
+            <app-simple-loader [width]="251" [height]="24" class="mt-3"></app-simple-loader>
+        </div>
+    </div>
 </div>

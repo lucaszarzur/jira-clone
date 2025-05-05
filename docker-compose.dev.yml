@@ -3,7 +3,7 @@ version: '3.3'
 services:
   mysql:
     image: mysql:8.0
-    container_name: jira-clone-mysql
+    container_name: jira-clone-mysql-dev
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -24,14 +24,14 @@ services:
 
   backend:
     build: ./backend
-    container_name: jira-clone-backend
+    container_name: jira-clone-backend-dev
     restart: always
     depends_on:
       - mysql
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USER=jira_user
@@ -45,17 +45,21 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    container_name: jira-clone-frontend
+      dockerfile: Dockerfile.dev
+    container_name: jira-clone-frontend-dev
     restart: always
     depends_on:
       - backend
     ports:
-      - "4200:80"
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     environment:
-      - NODE_ENV=production
-      - BACKEND_URL=http://backend:3000
-    # No volumes in production to ensure using the built version
+      - NODE_ENV=development
+      - NG_BUILD_MANGLE=false
+      - WEBPACK_DEV_SERVER_HOST=0.0.0.0
+      - ANGULAR_CLI_ANALYTICS=false
 
 volumes:
-  mysql-data:
+  mysql-data: 

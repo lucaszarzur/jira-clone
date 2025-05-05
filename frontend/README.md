@@ -232,10 +232,69 @@ Not all components have properly defined [aria attributes](https://developer.moz
 
 ## Setting up development environment 🛠
 
+### Local Setup
+
 - `git clone https://github.com/lucaszarzur/jira-clone.git`
 - `cd jira-clone`
-- `docker-compose up -d` to start both frontend and backend
-- The app should run on `http://localhost:4200/` (frontend) and `http://localhost:3000/` (backend API)
+- `cd frontend`
+- `npm install`
+- `npm start` to start the frontend Angular development server
+- The app should run on `http://localhost:4200/`
+
+### Docker Setup
+
+Temos duas configurações Docker para diferentes ambientes:
+
+#### Ambiente de Desenvolvimento (com Hot-Reload)
+
+```bash
+# Na raiz do projeto
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Isso iniciará:
+- Frontend em modo de desenvolvimento com hot-reload (porta 4200)
+- Backend em modo de desenvolvimento (porta 3000)
+- MySQL (porta 3306)
+
+Você pode editar arquivos localmente e as mudanças serão automaticamente refletidas.
+
+#### Ambiente de Produção
+
+```bash
+# Na raiz do projeto
+docker-compose up -d
+```
+
+Isso criará:
+- Frontend compilado e otimizado, servido pelo Node.js (porta 4200)
+- Backend em modo de produção (porta 3000)
+- MySQL (porta 3306)
+
+#### Scripts Auxiliares
+
+Para facilitar o gerenciamento dos contêineres Docker:
+
+```bash
+# Iniciar ambiente de desenvolvimento
+./build-deploy.sh dev
+
+# Iniciar ambiente de produção
+./build-deploy.sh prod
+
+# Limpar ambiente Docker (remover contêineres, imagens e volumes)
+./build-deploy.sh clean
+```
+
+#### Reconstruindo o Frontend
+
+Se precisar reconstruir apenas o frontend:
+
+```bash
+cd frontend
+./rebuild.sh
+```
+
 
 ### Unit/Integration tests 🧪
 

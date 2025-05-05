@@ -6,17 +6,19 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 const initSentry = () => {
-  Sentry.init({
-    dsn: `${environment.SENTRY_DSN}`,
-    release: environment.version,
-    integrations: [
-      new Integrations.BrowserTracing({
-        tracingOrigins: ['localhost', 'https://taskflow.app/'],
-        routingInstrumentation: Sentry.routingInstrumentation,
-      }),
-    ],
-    tracesSampleRate: 1.0,
-  });
+  if (environment.SENTRY_DSN) {
+    Sentry.init({
+      dsn: `${environment.SENTRY_DSN}`,
+      release: environment.version,
+      integrations: [
+        new Integrations.BrowserTracing({
+          tracingOrigins: ['localhost', 'https://taskflow.app/'],
+          routingInstrumentation: Sentry.routingInstrumentation,
+        }),
+      ],
+      tracesSampleRate: 1.0,
+    });
+  }
 };
 
 if (environment.production) {

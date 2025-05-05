@@ -9,27 +9,83 @@ Este é o backend REST API para o projeto TaskFlow (Jira Clone), implementado co
 
 ## Configuração e Execução
 
+### Instalação Local (Sem Docker)
+
 1. Clone o repositório:
 
 ```bash
 git clone https://github.com/lucaszarzur/jira-clone.git
-cd jira-clone
+cd jira-clone/backend
 ```
 
-2. Inicie os containers Docker:
+2. Instale as dependências:
 
 ```bash
+npm install
+```
+
+3. Configure o banco de dados MySQL localmente.
+
+4. Configure as variáveis de ambiente no arquivo `.env`:
+
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=jira_clone
+NODE_ENV=development
+```
+
+5. Inicie o servidor:
+
+```bash
+npm run dev
+```
+
+### Usando Docker
+
+Temos configurações Docker para diferentes ambientes:
+
+#### Ambiente de Desenvolvimento
+
+```bash
+# Na raiz do projeto
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Isso iniciará:
+- Backend em modo de desenvolvimento com hot-reload (porta 3000)
+- Frontend em modo de desenvolvimento (porta 4200)
+- MySQL (porta 3306)
+
+Os volumes estão configurados para permitir editar arquivos locais e ter as mudanças refletidas automaticamente.
+
+#### Ambiente de Produção
+
+```bash
+# Na raiz do projeto
 docker-compose up -d
 ```
 
-Isso iniciará dois containers:
+Isso iniciará:
+- Backend em modo de produção (porta 3000)
+- Frontend otimizado (porta 4200)
 - MySQL (porta 3306)
-- Backend Node.js (porta 3000)
 
-3. Acesse a API em:
+#### Scripts Auxiliares
 
-```
-http://localhost:3000/api
+Para facilitar o gerenciamento:
+
+```bash
+# Iniciar ambiente de desenvolvimento
+./build-deploy.sh dev
+
+# Iniciar ambiente de produção
+./build-deploy.sh prod
+
+# Limpar ambiente Docker (remover contêineres, imagens e volumes)
+./build-deploy.sh clean
 ```
 
 ## Estrutura do Projeto

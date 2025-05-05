@@ -75,6 +75,61 @@ O banco de dados MySQL contém as seguintes tabelas:
 
 ## Configuração e Execução
 
+### Ambientes Docker
+
+O projeto possui configurações Docker para diferentes ambientes:
+
+#### Ambiente de Desenvolvimento
+
+Utiliza o servidor de desenvolvimento do Angular com hot-reload:
+
+```bash
+./build-deploy.sh dev
+```
+
+Ou manualmente:
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+#### Ambiente de Produção
+
+Compila o frontend Angular e serve os arquivos estáticos com o servidor Node:
+
+```bash
+./build-deploy.sh prod
+```
+
+Ou manualmente:
+
+```bash
+docker-compose up -d
+```
+
+#### Limpeza do Ambiente Docker
+
+Para remover contêineres, imagens e volumes:
+
+```bash
+./build-deploy.sh clean
+```
+
+### Diferenças entre Ambientes
+
+| Característica | Desenvolvimento | Produção |
+|----------------|-----------------|----------|
+| Servidor Angular | `ng serve` com hot-reload | Arquivos estáticos via `serve` |
+| Otimizações | Não otimizado, com sourcemaps | Código minificado, AOT |
+| Volumes | Sincroniza arquivos locais | Sem volumes, build selada |
+| Performance | Mais lento, para desenvolvimento | Rápido, otimizado |
+
+### Configuração com Nginx
+
+Se você tem o Nginx instalado diretamente na sua máquina host (como exemplo uma VPS), pode usar o arquivo `nginx-host-config.conf` como modelo para configurar o proxy reverso para os contêineres Docker.
+
+Para detalhes completos sobre a implantação, consulte [DEPLOYMENT.md](./DEPLOYMENT.md).
+
 ### Usando Docker (Recomendado)
 
 1. Clone o repositório:
@@ -93,6 +148,7 @@ docker-compose up -d
 Isso iniciará:
 - MySQL (porta 3306)
 - Backend Node.js (porta 3000)
+- Frontend Angular (porta 4200)
 
 3. Acesse o frontend em:
 
@@ -127,6 +183,19 @@ cd frontend
 npm install
 ng serve
 ```
+
+### Desenvolvimento com Docker
+
+Para desenvolvimento com hot-reload, você pode usar o docker-compose.dev.yml:
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Este modo de desenvolvimento oferece:
+- Hot-reload para o frontend (mudanças em arquivos são refletidas automaticamente)
+- Hot-reload para o backend
+- Container MySQL com persistência de dados
 
 #
 

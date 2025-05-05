@@ -2,11 +2,11 @@ module.exports = {
   prefix: '',
   important: false,
   separator: ':',
-  purge: {
+  content: {
     enabled: true,
     content: ['./src/**/*.ts', './src/**/*.html'],
     options: {
-      whitelistPatterns: [
+      safelist: [
         /^font/,
         /^cursor/,
         /^pl-/,
