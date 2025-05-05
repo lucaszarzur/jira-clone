@@ -1,0 +1,94 @@
+.textarea-border {
+  color: rgb(137, 147, 164);
+  border: 1px solid rgb(223, 225, 230);
+  cursor: text;
+  user-select: none;
+  padding: 12px 16px;
+  border-radius: 4px;
+}
+
+.comment-content {
+  padding: 8px 0;
+
+  .comment-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  &:hover {
+    .comment-actions {
+      opacity: 1;
+    }
+  }
+
+  // Estilos para o conteúdo HTML renderizado
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
+
+  pre {
+    background-color: #f6f8fa;
+    border-radius: 3px;
+    padding: 10px;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+}
+
+// Estilos para o editor Quill
+:host ::ng-deep {
+  .ql-container {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  .ql-toolbar {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+
+  .ql-editor {
+    min-height: 100px;
+    max-height: 300px;
+    overflow-y: auto;
+
+    // Garantir que as imagens se ajustem ao contêiner
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 10px 0;
+    }
+
+    // Garantir que blocos de código se ajustem ao contêiner
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 10px;
+      overflow-x: auto;
+      max-width: 100%;
+    }
+  }
+
+  .ql-editor.ql-blank::before {
+    color: rgb(137, 147, 164);
+  }
+}
+
+// Estilos para o contêiner de botões
+.comment-edit {
+  position: relative;
+
+  .flex {
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+    padding-top: 8px;
+    z-index: 10;
+    border-top: 1px solid #f0f0f0;
+  }
+}

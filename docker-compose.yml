@@ -1,0 +1,46 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: jira-clone-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jira_clone
+      MYSQL_USER: jira_user
+      MYSQL_PASSWORD: jira_password
+      MYSQL_SQL_MODE: "NO_ENGINE_SUBSTITUTION"
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backend/src/config/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: jira-clone-backend
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=jira_user
+      - DB_PASSWORD=jira_password
+      - DB_NAME=jira_clone
+      - SEED_DATA=true
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+volumes:
+  mysql-data:

@@ -1,0 +1,73 @@
+<div class="relative mt-3 text-15">
+    <j-avatar class="absolute top-0 left-0"
+              [avatarUrl]="user.avatarUrl"
+              [size]="30">
+    </j-avatar>
+    <div class="pl-10"
+         *ngIf="comment">
+        <div class="inline-block mr-3 mb-2 text-textDark font-medium">
+            {{ comment.user.name}}
+        </div>
+        <div *ngIf="!createMode"
+             class="inline-block pb-2 text-textDark text-sm">
+            {{ comment.updatedAt | date:"medium" }}
+        </div>
+        <div class="editing-area"
+             *ngIf="createMode">
+            <div *ngIf="!isEditing"
+                 class="textarea-inline-control textarea-border"
+                 (click)="setCommentEdit(true)">
+                <div class="text-gray-500">Add a comment...</div>
+            </div>
+            <div *ngIf="isEditing" class="comment-edit">
+                <quill-editor #commentBoxRef
+                              [formControl]="commentControl"
+                              [modules]="editorOptions"
+                              placeholder="Add a comment"
+                              [styles]="{height: 'auto', minHeight: '150px', maxHeight: '400px'}"
+                              (onEditorCreated)="setCommentEdit(true)">
+                </quill-editor>
+                <div class="flex pt-2 pb-4 items-center">
+                    <j-button [className]="'btn btn-primary mr-2'"
+                              (click)="addComment()">
+                        Save
+                    </j-button>
+                    <j-button [className]="'btn btn-empty'"
+                              (click)="cancelAddComment()">
+                        Cancel
+                    </j-button>
+                </div>
+            </div>
+            <div *ngIf="!isEditing"
+                 class="text-xs"><strong>Pro tip: </strong>press <span class="px-1 font-semibold bg-backgroundMedium">M</span> to comment
+            </div>
+        </div>
+        <div *ngIf="!createMode">
+            <div *ngIf="!isEditing" class="comment-content">
+                <div [innerHTML]="processedBody"></div>
+                <div class="comment-actions mt-2">
+                    <button class="text-textMedium hover:text-textDark text-sm mr-2"
+                            (click)="setCommentEdit(true)">
+                        Edit
+                    </button>
+                </div>
+            </div>
+            <div *ngIf="isEditing" class="comment-edit">
+                <quill-editor [formControl]="commentControl"
+                              [modules]="editorOptions"
+                              [styles]="{height: 'auto', minHeight: '150px', maxHeight: '400px'}">
+                </quill-editor>
+                <div class="flex pt-2 pb-4 items-center">
+                    <j-button [className]="'btn btn-primary mr-2'"
+                              (click)="updateComment()">
+                        Save
+                    </j-button>
+                    <j-button [className]="'btn btn-empty'"
+                              (click)="setCommentEdit(false)">
+                        Cancel
+                    </j-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

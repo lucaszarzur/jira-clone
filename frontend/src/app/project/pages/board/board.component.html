@@ -1,0 +1,53 @@
+<div class="flex flex-col w-full h-full py-8 pl-8 pr-6">
+    <breadcrumbs [items]="breadcrumbs"></breadcrumbs>
+    <header class="flex justify-between mt-3 text-textDarkest">
+        <div class="text-2xl font-medium">Kanban board</div>
+        <div class="social-links">
+            <a href="https://www.linkedin.com/in/lucas-zarzur/"
+               target="_blank"
+               rel="noopener">
+                <j-button className="btn-secondary mr-2"> 👨‍💼 LinkedIn
+                </j-button>
+            </a>
+
+            <a href="https://lucaszarzur.dev/"
+               target="_blank"
+               rel="noopener">
+                <j-button className="btn-secondary mr-2"> 🌐 Website
+                </j-button>
+            </a>
+
+            <a href="https://meunutria.com/"
+               target="_blank"
+               rel="noopener">
+                <j-button className="btn-secondary mr-2"> 🚀 MeuNutria
+                </j-button>
+            </a>
+
+            <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fgithub.com%2Flucaszarzur%2Fjira-clone-angular&text=Awesome%20Jira%20clone%20app%20built%20with%20Angular%20and%20MySQL&hashtags=angular,mysql,typescript"
+               (click)="sendTwitterEventButton()"
+               target="_blank"
+               rel="noopener"
+               class="mr-2">
+                <j-button className="btn-secondary">
+                    <div class="flex items-center">
+                        <i class="mr-2 text-blue-500"
+                           nz-icon
+                           nzType="twitter"
+                           nzTheme="outline"></i> Tweet
+                    </div>
+                </j-button>
+            </a>
+            <a href="https://github.com/lucaszarzur/jira-clone"
+               target="_blank"
+               rel="noopener">
+                <j-button className="btn-secondary"
+                          icon="github">Source Code
+                </j-button>
+            </a>
+        </div>
+    </header>
+
+    <board-filter></board-filter>
+    <board-dnd></board-dnd>
+</div>

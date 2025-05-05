@@ -1,0 +1,17 @@
+<issue-comment [createMode]="true"
+               [issueId]="issue?.id">
+</issue-comment>
+
+<div *ngIf="isLoading" class="flex justify-center py-4">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Carregando...</span>
+    </div>
+</div>
+
+<div *ngIf="!isLoading && issue?.comments?.length === 0" class="text-center py-4 text-textMedium">
+    Nenhum comentário encontrado.
+</div>
+
+<issue-comment *ngFor="let comment of issue?.comments"
+               [comment]="comment">
+</issue-comment>
