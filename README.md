@@ -126,7 +126,20 @@ Para remover contêineres, imagens e volumes:
 
 ### Configuração com Nginx
 
-Se você tem o Nginx instalado diretamente na sua máquina host (como exemplo uma VPS), pode usar o arquivo `nginx-host-config.conf` como modelo para configurar o proxy reverso para os contêineres Docker.
+#### Ambiente Local (Desenvolvimento)
+No ambiente de desenvolvimento local, o Nginx é incluído no container Docker do frontend para facilitar o desenvolvimento e testes.
+
+#### Ambiente de Produção (VPS)
+Em produção, recomenda-se usar o Nginx instalado diretamente na máquina host (VPS) como proxy reverso para os containers Docker. Isso evita conflitos de porta e permite uma configuração mais flexível.
+
+Para isso:
+1. Use o Dockerfile.prod para o frontend em produção: `docker-compose -f docker-compose.prod.yml up -d`
+2. Configure o Nginx da máquina host usando o arquivo `nginx-host-config.conf` como modelo
+
+O frontend possui três Dockerfiles diferentes:
+- `Dockerfile` - Padrão para desenvolvimento local (inclui Nginx)
+- `Dockerfile.dev` - Para desenvolvimento com hot-reload
+- `Dockerfile.prod` - Para produção (sem Nginx, usa serve)
 
 Para detalhes completos sobre a implantação, consulte [DEPLOYMENT.md](./DEPLOYMENT.md).
 

@@ -14,6 +14,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: true // Allow null for backward compatibility with existing users
+    },
+    role: {
+      type: DataTypes.ENUM('admin', 'user'),
+      defaultValue: 'user',
+      allowNull: false
+    },
     avatarUrl: {
       type: DataTypes.STRING
     }
@@ -41,6 +50,14 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       as: 'comments'
     });
+
+    // New association for project permissions
+    if (models.Permission) {
+      User.hasMany(models.Permission, {
+        foreignKey: 'userId',
+        as: 'permissions'
+      });
+    }
   };
 
   return User;

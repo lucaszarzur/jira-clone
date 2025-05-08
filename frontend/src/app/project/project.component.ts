@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { ProjectQuery } from './state/project/project.query';
 import { ProjectService } from './state/project/project.service';
+import { JProject } from '@trungk18/interface/project';
 import { AuthService } from './auth/auth.service';
-import { LoginPayload } from '@trungk18/project/auth/loginPayload';
 
 @Component({
   selector: 'app-project',
@@ -9,14 +12,25 @@ import { LoginPayload } from '@trungk18/project/auth/loginPayload';
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
+  project$: Observable<JProject>;
   expanded: boolean;
-  constructor(private _projectService: ProjectService, private _authService: AuthService) {
+
+  constructor(
+    private route: ActivatedRoute,
+    private projectQuery: ProjectQuery,
+    private projectService: ProjectService,
+    private _authService: AuthService
+  ) {
+    this.project$ = this.projectQuery.selectActive();
     this.expanded = true;
   }
 
   ngOnInit(): void {
-    this._authService.login(new LoginPayload());
-    this._projectService.getProject();
+    const projectId = this.route.snapshot.params['id'];
+    if (projectId) {
+      this.projectService.getProjectById(projectId);
+    }
+
     this.handleResize();
   }
 

@@ -1,0 +1,92 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="logo-container">
+      <img src="assets/logo.svg" alt="TaskFlow Logo" class="logo">
+      <h1 class="title">TaskFlow</h1>
+    </div>
+    
+    <h2 class="subtitle">Create your account</h2>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input 
+          nz-input 
+          type="text" 
+          id="name" 
+          formControlName="name" 
+          placeholder="Enter your name"
+        >
+        <div *ngIf="registerForm.get('name').invalid && registerForm.get('name').touched" class="error-message">
+          <span *ngIf="registerForm.get('name').errors?.required">Name is required</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          nz-input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Enter your email"
+        >
+        <div *ngIf="registerForm.get('email').invalid && registerForm.get('email').touched" class="error-message">
+          <span *ngIf="registerForm.get('email').errors?.required">Email is required</span>
+          <span *ngIf="registerForm.get('email').errors?.email">Please enter a valid email</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          nz-input 
+          type="password" 
+          id="password" 
+          formControlName="password" 
+          placeholder="Enter your password"
+        >
+        <div *ngIf="registerForm.get('password').invalid && registerForm.get('password').touched" class="error-message">
+          <span *ngIf="registerForm.get('password').errors?.required">Password is required</span>
+          <span *ngIf="registerForm.get('password').errors?.minlength">Password must be at least 6 characters</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input 
+          nz-input 
+          type="password" 
+          id="confirmPassword" 
+          formControlName="confirmPassword" 
+          placeholder="Confirm your password"
+        >
+        <div *ngIf="registerForm.get('confirmPassword').invalid && registerForm.get('confirmPassword').touched" class="error-message">
+          <span *ngIf="registerForm.get('confirmPassword').errors?.required">Please confirm your password</span>
+          <span *ngIf="registerForm.get('confirmPassword').errors?.passwordMismatch">Passwords do not match</span>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button 
+          nz-button 
+          nzType="primary" 
+          [nzLoading]="isSubmitting" 
+          [disabled]="registerForm.invalid || isSubmitting"
+          class="register-button"
+        >
+          Register
+        </button>
+      </div>
+    </form>
+    
+    <div class="login-link">
+      <span>Already have an account?</span>
+      <a (click)="navigateToLogin()">Log in</a>
+    </div>
+    
+    <div *ngIf="(isLoading$ | async)" class="loading-overlay">
+      <nz-spin nzTip="Loading..."></nz-spin>
+    </div>
+  </div>
+</div>

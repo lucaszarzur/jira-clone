@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     category: {
       type: DataTypes.ENUM('Software', 'Marketing', 'Business'),
       allowNull: false
+    },
+    isPublic: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   }, {
     tableName: 'projects'
@@ -28,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'projectId',
       as: 'issues'
     });
+
+    // New association for project permissions
+    if (models.Permission) {
+      Project.hasMany(models.Permission, {
+        foreignKey: 'projectId',
+        as: 'permissions'
+      });
+    }
   };
 
   return Project;

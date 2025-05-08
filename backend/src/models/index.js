@@ -17,13 +17,31 @@ const sequelize = new Sequelize(
 
 const db = {};
 
-// Carrega todos os modelos da pasta
-fs.readdirSync(__dirname)
-  .filter(file => file.indexOf('.') !== 0 && file !== 'index.js' && file.slice(-3) === '.js')
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
+// Importar modelos diretamente
+const User = require('./user')(sequelize, Sequelize.DataTypes);
+const Project = require('./project')(sequelize, Sequelize.DataTypes);
+const Issue = require('./issue')(sequelize, Sequelize.DataTypes);
+const Comment = require('./comment')(sequelize, Sequelize.DataTypes);
+const projectUserModule = require('./projectUser')(sequelize);
+
+// Adicionar modelos ao objeto db
+db.User = User;
+db.Project = Project;
+db.Issue = Issue;
+db.Comment = Comment;
+db.ProjectUser = projectUserModule.ProjectUser;
+db.UserRoles = projectUserModule.UserRoles;
+
+// Definir associações entre modelos
+// Projeto e Usuários (muitos para muitos através de ProjectUser)
+Project.belongsToMany(User, { through: db.ProjectUser, foreignKey: 'projectId', as: 'users' });
+User.belongsToMany(Project, { through: db.ProjectUser, foreignKey: 'userId', as: 'projects' });
+
+// Associações diretas com ProjectUser
+db.ProjectUser.belongsTo(User, { foreignKey: 'userId' });
+db.ProjectUser.belongsTo(Project, { foreignKey: 'projectId' });
+Project.hasMany(db.ProjectUser, { foreignKey: 'projectId' });
+User.hasMany(db.ProjectUser, { foreignKey: 'userId' });
 
 // Associa os modelos
 Object.keys(db).forEach(modelName => {

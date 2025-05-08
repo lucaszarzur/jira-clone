@@ -1,0 +1,117 @@
+<div class="permissions-container">
+  <h2 class="title">Project Permissions</h2>
+  
+  <div class="public-status">
+    <span class="label">Public Project:</span>
+    <span class="value" [ngClass]="{'is-public': project.isPublic}">
+      {{ project.isPublic ? 'Yes' : 'No' }}
+    </span>
+    <span class="hint" *ngIf="project.isPublic">
+      This project is publicly accessible to anyone, even without logging in.
+    </span>
+  </div>
+  
+  <div class="permissions-section">
+    <h3 class="section-title">User Permissions</h3>
+    
+    <div class="permissions-list" *ngIf="!isLoading && permissions.length > 0">
+      <div class="permission-item" *ngFor="let permission of permissions">
+        <div class="user-info">
+          <j-avatar 
+            [avatarUrl]="permission.user?.avatarUrl" 
+            [name]="permission.user?.name || getUserName(permission.userId)" 
+            [size]="32">
+          </j-avatar>
+          <div class="user-details">
+            <div class="user-name">{{ permission.user?.name || getUserName(permission.userId) }}</div>
+            <div class="user-email">{{ permission.user?.email || '' }}</div>
+          </div>
+        </div>
+        
+        <div class="permission-actions">
+          <nz-select 
+            [(ngModel)]="permission.role" 
+            (ngModelChange)="updatePermission(permission, $event)"
+            [nzDisabled]="isLoading">
+            <nz-option nzValue="admin" nzLabel="Admin"></nz-option>
+            <nz-option nzValue="member" nzLabel="Member"></nz-option>
+            <nz-option nzValue="viewer" nzLabel="Viewer"></nz-option>
+          </nz-select>
+          
+          <button 
+            nz-button 
+            nzType="default" 
+            nzDanger 
+            (click)="removePermission(permission)"
+            [nzLoading]="isLoading">
+            <i nz-icon nzType="delete" nzTheme="outline"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="empty-state" *ngIf="!isLoading && permissions.length === 0">
+      <i nz-icon nzType="team" nzTheme="outline"></i>
+      <p>No users have been assigned to this project yet.</p>
+    </div>
+    
+    <nz-spin *ngIf="isLoading" class="loading-spinner"></nz-spin>
+  </div>
+  
+  <div class="add-user-section">
+    <h3 class="section-title">Add User</h3>
+    
+    <form [formGroup]="addUserForm" (ngSubmit)="addUser()" class="add-user-form">
+      <div class="form-row">
+        <nz-select 
+          formControlName="userId" 
+          nzPlaceHolder="Select a user" 
+          class="user-select"
+          [nzDisabled]="isLoading">
+          <nz-option 
+            *ngFor="let user of users" 
+            [nzValue]="user.id" 
+            [nzLabel]="user.name">
+          </nz-option>
+        </nz-select>
+        
+        <nz-select 
+          formControlName="role" 
+          class="role-select"
+          [nzDisabled]="isLoading">
+          <nz-option nzValue="admin" nzLabel="Admin"></nz-option>
+          <nz-option nzValue="member" nzLabel="Member"></nz-option>
+          <nz-option nzValue="viewer" nzLabel="Viewer"></nz-option>
+        </nz-select>
+        
+        <button 
+          nz-button 
+          nzType="primary" 
+          type="submit" 
+          [disabled]="addUserForm.invalid"
+          [nzLoading]="isLoading">
+          Add User
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <div class="permissions-info">
+    <h3 class="section-title">Permission Levels</h3>
+    
+    <div class="permission-level">
+      <div class="level-name">Admin</div>
+      <div class="level-description">Can manage project settings, permissions, and perform all actions</div>
+    </div>
+    
+    <div class="permission-level">
+      <div class="level-name">Member</div>
+      <div class="level-description">Can create, edit, and delete issues, but cannot change project settings</div>
+    </div>
+    
+    <div class="permission-level">
+      <div class="level-name">Viewer</div>
+      <div class="level-description">Can only view issues and add comments</div>
+    </div>
+  </div>
+</div>

@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(36) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255),
+  role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
   avatarUrl VARCHAR(255),
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL
@@ -19,6 +21,7 @@ CREATE TABLE IF NOT EXISTS projects (
   url VARCHAR(255),
   description TEXT,
   category ENUM('Software', 'Marketing', 'Business') NOT NULL,
+  isPublic BOOLEAN NOT NULL DEFAULT FALSE,
   createdAt DATETIME NOT NULL,
   updatedAt DATETIME NOT NULL
 );
@@ -66,19 +69,33 @@ CREATE TABLE IF NOT EXISTS issue_users (
   FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Tabela de permissões de usuários em projetos
+CREATE TABLE IF NOT EXISTS permissions (
+  id VARCHAR(36) PRIMARY KEY,
+  userId VARCHAR(36) NOT NULL,
+  projectId VARCHAR(36) NOT NULL,
+  role ENUM('admin', 'member', 'viewer') NOT NULL DEFAULT 'viewer',
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME NOT NULL,
+  UNIQUE KEY unique_user_project (userId, projectId),
+  FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (projectId) REFERENCES projects(id) ON DELETE CASCADE
+);
+
 -- Inserir dados iniciais de usuários
-INSERT INTO users (id, name, email, avatarUrl, createdAt, updatedAt)
+-- Senha padrão para todos os usuários: 'password'
+INSERT INTO users (id, name, email, password, role, avatarUrl, createdAt, updatedAt)
 VALUES
-  ('d65047e5-f4cf-4caa-9a38-6073dcbab7d1', 'Lucas Zarzur', 'lucas12zarzur@gmail.com', 'https://media.licdn.com/dms/image/v2/D4E03AQG33wl2LaQxhg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1723662290547?e=2147483647&v=beta&t=_sMKaiXXDLkggkrmygTpc6LpvQzfFqSh5Ppk00SymDU', NOW(), NOW()),
-  ('7ac265f9-b9ac-443f-a2b2-795682e579a4', 'Iron Man', 'ironman@example.com', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405732/ironman_c3jrbc.jpg', NOW(), NOW()),
-  ('94502aad-c97f-43e1-a9d1-28cf3e4937a7', 'Captain', 'captain@example.com', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405732/captain_e8s9nk.jpg', NOW(), NOW()),
-  ('610451aa-10c8-4d7e-9363-311357c0b0dd', 'Thor', 'thor@example.com', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405731/thor_juqwzf.jpg', NOW(), NOW()),
-  ('081ccaa1-5595-4621-8074-ede4927e67b0', 'Spider Man', 'spiderman@example.com', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405731/spiderman_zlrtx0.jpg', NOW(), NOW());
+  ('d65047e5-f4cf-4caa-9a38-6073dcbab7d1', 'Lucas Zarzur', 'lucas12zarzur@gmail.com', 'password', 'admin', 'https://media.licdn.com/dms/image/v2/D4E03AQG33wl2LaQxhg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1723662290547?e=2147483647&v=beta&t=_sMKaiXXDLkggkrmygTpc6LpvQzfFqSh5Ppk00SymDU', NOW(), NOW()),
+  ('7ac265f9-b9ac-443f-a2b2-795682e579a4', 'Iron Man', 'ironman@example.com', 'password', 'user', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405732/ironman_c3jrbc.jpg', NOW(), NOW()),
+  ('94502aad-c97f-43e1-a9d1-28cf3e4937a7', 'Captain', 'captain@example.com', 'password', 'user', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405732/captain_e8s9nk.jpg', NOW(), NOW()),
+  ('610451aa-10c8-4d7e-9363-311357c0b0dd', 'Thor', 'thor@example.com', 'password', 'user', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405731/thor_juqwzf.jpg', NOW(), NOW()),
+  ('081ccaa1-5595-4621-8074-ede4927e67b0', 'Spider Man', 'spiderman@example.com', 'password', 'user', 'https://res.cloudinary.com/dvujyxh7e/image/upload/c_scale,w_48/v1592405731/spiderman_zlrtx0.jpg', NOW(), NOW());
 
 -- Inserir dados iniciais de projetos
-INSERT INTO projects (id, name, url, description, category, createdAt, updatedAt)
+INSERT INTO projects (id, name, url, description, category, isPublic, createdAt, updatedAt)
 VALUES
-  ('140892', 'TaskFlow Project Management', 'https://github.com/lucaszarzur/jira-clone', 'A modern project management tool built with Angular, Akita and ng-zorro in the frontend and Node.js, Express, MySQL and Sequelize in the backend', 'Software', '2025-05-04 16:00:00', '2020-06-13 16:00:00');
+  ('140892', 'TaskFlow Project Management', 'https://github.com/lucaszarzur/jira-clone', 'A modern project management tool built with Angular, Akita and ng-zorro in the frontend and Node.js, Express, MySQL and Sequelize in the backend', 'Software', TRUE, '2025-05-04 16:00:00', '2020-06-13 16:00:00');
 
 -- Inserir algumas issues iniciais
 INSERT INTO issues (id, title, type, status, priority, listPosition, description, reporterId, projectId, createdAt, updatedAt)
@@ -99,3 +116,12 @@ INSERT INTO comments (id, body, issueId, userId, createdAt, updatedAt)
 VALUES
   ('1', 'This is a great project!', '9584', '7ac265f9-b9ac-443f-a2b2-795682e579a4', NOW(), NOW()),
   ('2', 'I agree, very useful for learning Angular.', '9584', '94502aad-c97f-43e1-a9d1-28cf3e4937a7', NOW(), NOW());
+
+-- Inserir permissões iniciais para o projeto de exemplo
+INSERT INTO permissions (id, userId, projectId, role, createdAt, updatedAt)
+VALUES
+  (UUID(), 'd65047e5-f4cf-4caa-9a38-6073dcbab7d1', '140892', 'admin', NOW(), NOW()),
+  (UUID(), '7ac265f9-b9ac-443f-a2b2-795682e579a4', '140892', 'member', NOW(), NOW()),
+  (UUID(), '94502aad-c97f-43e1-a9d1-28cf3e4937a7', '140892', 'member', NOW(), NOW()),
+  (UUID(), '610451aa-10c8-4d7e-9363-311357c0b0dd', '140892', 'viewer', NOW(), NOW()),
+  (UUID(), '081ccaa1-5595-4621-8074-ede4927e67b0', '140892', 'viewer', NOW(), NOW());

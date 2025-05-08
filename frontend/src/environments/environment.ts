@@ -6,8 +6,8 @@ import { EnvironmentModel } from './environment-model';
 
 export const environment: EnvironmentModel = {
   production: false,
-  apiUrl: 'http://localhost:3000/api', // Apontando para a nova API REST
-  baseUrl: 'http://localhost:3000', // URL base do backend para recursos estáticos
+  apiUrl: '/api', // Usando o proxy configurado
+  baseUrl: '', // URL base vazia para caminhos relativos
   version: '1.0.0',
   SENTRY_DSN: ''
 };

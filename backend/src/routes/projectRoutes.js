@@ -1,12 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const projectController = require('../controllers/projectController');
+const { authenticateToken, optionalAuthenticateToken, isAdmin, checkProjectPermission } = require('../middleware/authMiddleware');
 
-// Rotas para projetos
-router.get('/', projectController.getAllProjects);
-router.get('/:id', projectController.getProjectById);
-router.post('/', projectController.createProject);
-router.put('/:id', projectController.updateProject);
-router.delete('/:id', projectController.deleteProject);
+// Semi-public routes - can be accessed without authentication, but authentication is used if provided
+router.get('/', optionalAuthenticateToken, projectController.getAllProjects);
+router.get('/:id', optionalAuthenticateToken, projectController.getProjectById);
+
+// Protected routes - require authentication
+router.post('/', authenticateToken, projectController.createProject);
+router.put('/:id', authenticateToken, checkProjectPermission('admin'), projectController.updateProject);
+router.delete('/:id', authenticateToken, checkProjectPermission('admin'), projectController.deleteProject);
 
 module.exports = router;
