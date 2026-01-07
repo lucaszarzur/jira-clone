@@ -63,10 +63,16 @@ export class ProjectService {
       .pipe(
         setLoading(this.store),
         tap((project) => {
-          this.store.update((state) => ({
-            ...state,
-            project
-          }));
+          this.store.update((state) => {
+            const issues = project?.issues ?? state.issues;
+            const users = project?.users ?? state.users;
+            return {
+              ...state,
+              project,
+              issues,
+              users
+            };
+          });
         }),
         catchError((error) => {
           this.store.setError(error);
@@ -310,12 +316,18 @@ export class ProjectService {
     return this.http.get<JProject>(`${this.baseUrl}/projects/${id}`).pipe(
       tap(project => {
         console.log('Project received:', project);
-        this.store.update(state => ({
-          ...state,
-          project,
-          loading: false,
-          error: null
-        }));
+        this.store.update(state => {
+          const issues = project?.issues ?? state.issues;
+          const users = project?.users ?? state.users;
+          return {
+            ...state,
+            project,
+            issues,
+            users,
+            loading: false,
+            error: null
+          };
+        });
       }),
       catchError(error => {
         console.error('Error getting project:', error);

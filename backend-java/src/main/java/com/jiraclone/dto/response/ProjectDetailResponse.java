@@ -1,6 +1,7 @@
 package com.jiraclone.dto.response;
 
 import com.jiraclone.domain.entity.Issue;
+import com.jiraclone.domain.entity.Permission;
 import com.jiraclone.domain.entity.Project;
 import com.jiraclone.domain.enums.ProjectCategory;
 import com.jiraclone.domain.enums.ProjectRole;
@@ -27,9 +28,10 @@ public class ProjectDetailResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<IssueResponse> issues;
+    private List<UserResponse> users;
     private ProjectRole userRole;
 
-    public static ProjectDetailResponse from(Project project, ProjectRole userRole, List<Issue> issues) {
+    public static ProjectDetailResponse from(Project project, ProjectRole userRole, List<Issue> issues, List<Permission> permissions) {
         return ProjectDetailResponse.builder()
             .id(project.getId())
             .name(project.getName())
@@ -43,25 +45,13 @@ public class ProjectDetailResponse {
             .issues(issues.stream()
                 .map(ProjectDetailResponse::toIssueResponse)
                 .collect(Collectors.toList()))
+            .users(permissions.stream()
+                .map(permission -> UserResponse.from(permission.getUser()))
+                .collect(Collectors.toList()))
             .build();
     }
 
     private static IssueResponse toIssueResponse(Issue issue) {
-        return IssueResponse.builder()
-            .id(issue.getId())
-            .title(issue.getTitle())
-            .type(issue.getType())
-            .status(issue.getStatus())
-            .priority(issue.getPriority())
-            .listPosition(issue.getListPosition())
-            .description(issue.getDescription())
-            .estimate(issue.getEstimate())
-            .timeSpent(issue.getTimeSpent())
-            .timeRemaining(issue.getTimeRemaining())
-            .reporterId(issue.getReporterId())
-            .projectId(issue.getProjectId())
-            .createdAt(issue.getCreatedAt())
-            .updatedAt(issue.getUpdatedAt())
-            .build();
+        return IssueResponse.from(issue);
     }
 }

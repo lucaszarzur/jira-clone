@@ -180,19 +180,18 @@ public class DataInitializer implements CommandLineRunner {
 
             Issue savedIssue = issueRepository.save(issue);
 
-            // Add assignees
+            // Add assignees (User is the owning side of the relationship)
             JsonNode userIdsNode = issueNode.get("userIds");
             if (userIdsNode != null && userIdsNode.isArray()) {
-                Set<User> assignees = new HashSet<>();
                 for (JsonNode userIdNode : userIdsNode) {
                     String userId = userIdNode.asText();
                     User assignee = usersMap.get(userId);
                     if (assignee != null) {
-                        assignees.add(assignee);
+                        // Add issue to user's assignedIssues (owning side)
+                        assignee.getAssignedIssues().add(savedIssue);
+                        userRepository.save(assignee);
                     }
                 }
-                savedIssue.setAssignees(assignees);
-                issueRepository.save(savedIssue);
             }
 
             log.debug("Created issue: {}", issue.getTitle());

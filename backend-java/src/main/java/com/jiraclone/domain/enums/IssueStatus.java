@@ -1,5 +1,7 @@
 package com.jiraclone.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum IssueStatus {
     BACKLOG("Backlog"),
     SELECTED("Selected"),
@@ -12,6 +14,7 @@ public enum IssueStatus {
         this.value = value;
     }
 
+    @JsonValue
     public String getValue() {
         return value;
     }

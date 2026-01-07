@@ -45,6 +45,7 @@ public class ProjectService {
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public ProjectDetailResponse getProjectById(String id, UserPrincipal currentUser) {
         Project project = projectRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
@@ -79,10 +80,13 @@ public class ProjectService {
                       (project.getIsPublic() ? ProjectRole.VIEWER : null);
         }
 
-        // Get project issues
-        List<Issue> issues = issueRepository.findByProjectIdOrderByListPositionAsc(id);
+        // Get project issues with relationships (reporter, assignees, comments)
+        List<Issue> issues = issueRepository.findByProjectIdWithRelationships(id);
 
-        return ProjectDetailResponse.from(project, userRole, issues);
+        // Get project users (all users with permissions on this project)
+        List<Permission> permissions = permissionRepository.findByProjectId(id);
+
+        return ProjectDetailResponse.from(project, userRole, issues, permissions);
     }
 
     @Transactional

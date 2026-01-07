@@ -23,12 +23,14 @@ public class IssueService {
     private final IssueRepository issueRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<IssueResponse> getAllIssues() {
         return issueRepository.findAll().stream()
             .map(IssueResponse::from)
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public IssueResponse getIssueById(String id) {
         Issue issue = issueRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Issue", "id", id));

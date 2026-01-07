@@ -1,5 +1,7 @@
 package com.jiraclone.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum IssuePriority {
     LOWEST("Lowest"),
     LOW("Low"),
@@ -13,6 +15,7 @@ public enum IssuePriority {
         this.value = value;
     }
 
+    @JsonValue
     public String getValue() {
         return value;
     }

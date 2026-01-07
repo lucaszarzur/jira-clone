@@ -1,5 +1,7 @@
 package com.jiraclone.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum ProjectCategory {
     SOFTWARE("Software"),
     MARKETING("Marketing"),
@@ -11,6 +13,7 @@ public enum ProjectCategory {
         this.value = value;
     }
 
+    @JsonValue
     public String getValue() {
         return value;
     }
