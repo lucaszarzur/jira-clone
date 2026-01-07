@@ -5,13 +5,7 @@
       <h1>TaskFlow</h1>
     </div>
     <div class="auth-buttons">
-      <ng-container *ngIf="!(isAuthenticated$ | async); else userLoggedIn">
-        <button class="login-button" (click)="navigateToLogin()">Login</button>
-        <button class="register-button" (click)="navigateToRegister()">Register</button>
-      </ng-container>
-      <ng-template #userLoggedIn>
-        <button class="dashboard-button" (click)="navigateToDashboard()">Go to Dashboard</button>
-      </ng-template>
+      <button class="dashboard-button" (click)="navigateToDashboard()">Open Board</button>
     </div>
   </header>
 

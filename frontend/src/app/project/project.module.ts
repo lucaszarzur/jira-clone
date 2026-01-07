@@ -43,8 +43,6 @@ import { FullIssueDetailComponent } from './pages/full-issue-detail/full-issue-d
 import { SettingsComponent } from './pages/settings/settings.component';
 import { ProjectRoutingModule } from './project-routing.module';
 import { ProjectComponent } from './project.component';
-import { ProjectSettingsComponent } from './components/project-settings/project-settings.component';
-import { ProjectPermissionsComponent } from './components/project-permissions/project-permissions.component';
 
 @NgModule({
   declarations: [
@@ -65,8 +63,6 @@ import { ProjectPermissionsComponent } from './components/project-permissions/pr
     IssueReporterSelectComponent,
     IssueAssigneesSelectComponent,
     ResizerComponent,
-    ProjectSettingsComponent,
-    ProjectPermissionsComponent,
     // Removed project settings components temporarily
   ],
   imports: [
@@ -96,10 +92,6 @@ import { ProjectPermissionsComponent } from './components/project-permissions/pr
     TaskflowControlModule,
     SimpleLoaderModule,
     QuillModule
-  ],
-  exports: [
-    ProjectSettingsComponent,
-    ProjectPermissionsComponent
   ]
 })
 export class ProjectModule {}

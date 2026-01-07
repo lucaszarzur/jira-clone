@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthQuery } from '@trungk18/project/auth/auth.query';
-import { AuthService } from '@trungk18/project/auth/auth.service';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { SearchDrawerComponent } from '../../search/search-drawer/search-drawer.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { AddIssueModalComponent } from '../../add-issue-modal/add-issue-modal.component';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-navbar-left',
@@ -16,12 +12,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 export class NavbarLeftComponent implements OnInit {
   items: NavItem[];
   constructor(
-    public authQuery: AuthQuery,
-    private authService: AuthService,
     private _drawerService: NzDrawerService,
-    private _modalService: NzModalService,
-    private message: NzMessageService,
-    private router: Router
+    private _modalService: NzModalService
   ) {}
 
   ngOnInit(): void {
@@ -49,11 +41,6 @@ export class NavbarLeftComponent implements OnInit {
       nzClosable: false,
       nzWidth: 500
     });
-  }
-
-  logout() {
-    this.authService.logout();
-    this.message.success('Logged out successfully');
   }
 }
 

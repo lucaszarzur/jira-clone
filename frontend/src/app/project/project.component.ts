@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { ProjectQuery } from './state/project/project.query';
 import { ProjectService } from './state/project/project.service';
 import { JProject } from '@trungk18/interface/project';
-import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-project',
@@ -18,8 +17,7 @@ export class ProjectComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private projectQuery: ProjectQuery,
-    private projectService: ProjectService,
-    private _authService: AuthService
+    private projectService: ProjectService
   ) {
     this.project$ = this.projectQuery.selectActive();
     this.expanded = true;
@@ -28,7 +26,7 @@ export class ProjectComponent implements OnInit {
   ngOnInit(): void {
     const projectId = this.route.snapshot.params['id'];
     if (projectId) {
-      this.projectService.getProjectById(projectId);
+      this.projectService.getProjectById(projectId).subscribe();
     }
 
     this.handleResize();

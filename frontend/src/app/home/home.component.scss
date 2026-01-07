@@ -42,17 +42,7 @@
       transition: all 0.2s;
     }
 
-    .login-button {
-      background-color: transparent;
-      border: 1px solid #0052cc;
-      color: #0052cc;
-
-      &:hover {
-        background-color: rgba(0, 82, 204, 0.1);
-      }
-    }
-
-    .register-button, .dashboard-button {
+    .dashboard-button {
       background-color: #0052cc;
       border: 1px solid #0052cc;
       color: white;

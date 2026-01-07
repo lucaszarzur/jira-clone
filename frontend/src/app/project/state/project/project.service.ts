@@ -9,7 +9,6 @@ import { DateUtil } from '@trungk18/project/utils/date';
 import { of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { AuthService } from '../../auth/auth.service';
 import { ProjectStore } from './project.store';
 
 @Injectable({
@@ -21,8 +20,7 @@ export class ProjectService {
   constructor(
     private http: HttpClient,
     private store: ProjectStore,
-    private _notificationService: NotificationService,
-    private _authService: AuthService
+    private _notificationService: NotificationService
   ) {
     this.baseUrl = environment.apiUrl;
     console.log('ProjectService initialized with baseUrl:', this.baseUrl);
@@ -132,15 +130,6 @@ export class ProjectService {
   }
 
   createIssue(issue: JIssue) {
-    // Verificar se o usuário está autenticado
-    if (!this._authService.isAuthenticated()) {
-      this._notificationService.error(
-        'Autenticação necessária',
-        'Você precisa estar logado para criar uma issue. Por favor, faça login.'
-      );
-      return;
-    }
-
     issue.updatedAt = DateUtil.getNow();
     issue.createdAt = DateUtil.getNow();
 
@@ -167,15 +156,6 @@ export class ProjectService {
   }
 
   updateIssue(issue: JIssue) {
-    // Verificar se o usuário está autenticado
-    if (!this._authService.isAuthenticated()) {
-      this._notificationService.error(
-        'Autenticação necessária',
-        'Você precisa estar logado para atualizar uma issue. Por favor, faça login.'
-      );
-      return;
-    }
-
     issue.updatedAt = DateUtil.getNow();
 
     this.http
@@ -201,15 +181,6 @@ export class ProjectService {
   }
 
   deleteIssue(issueId: string) {
-    // Verificar se o usuário está autenticado
-    if (!this._authService.isAuthenticated()) {
-      this._notificationService.error(
-        'Autenticação necessária',
-        'Você precisa estar logado para excluir uma issue. Por favor, faça login.'
-      );
-      return;
-    }
-
     this.http
       .delete(`${this.baseUrl}/issues/${issueId}`)
       .pipe(
@@ -233,15 +204,6 @@ export class ProjectService {
   }
 
   updateIssueComment(issueId: string, comment: JComment) {
-    // Verificar se o usuário está autenticado
-    if (!this._authService.isAuthenticated()) {
-      this._notificationService.error(
-        'Autenticação necessária',
-        'Você precisa estar logado para adicionar ou atualizar comentários. Por favor, faça login.'
-      );
-      return;
-    }
-
     if (comment.id) {
       // Atualizar comentário existente
       this.http

@@ -42,8 +42,8 @@ export class NotificationService {
   handleHttpError(error: HttpErrorResponse): void {
     if (error.status === 401) {
       this.error(
-        'Autenticação necessária', 
-        'Você precisa estar logado para realizar esta ação. Por favor, faça login.'
+        'Não autorizado',
+        'Você não está autorizado a realizar esta ação.'
       );
     } else if (error.status === 403) {
       this.error(
