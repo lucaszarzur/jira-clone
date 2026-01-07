@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { arrayRemove, arrayUpsert, setLoading } from '@datorama/akita';
+import { NotificationService } from '@trungk18/core/services/notification.service';
 import { JComment } from '@trungk18/interface/comment';
 import { JIssue } from '@trungk18/interface/issue';
 import { JProject } from '@trungk18/interface/project';
@@ -14,29 +15,61 @@ import { ProjectStore } from './project.store';
   providedIn: 'root'
 })
 export class ProjectService {
-  baseUrl: string;
+  private baseUrl: string;
 
-  constructor(private _http: HttpClient, private _store: ProjectStore) {
+  constructor(
+    private http: HttpClient,
+    private store: ProjectStore,
+    private _notificationService: NotificationService
+  ) {
     this.baseUrl = environment.apiUrl;
+    console.log('ProjectService initialized with baseUrl:', this.baseUrl);
   }
 
   setLoading(isLoading: boolean) {
-    this._store.setLoading(isLoading);
+    console.log('Setting loading state:', isLoading);
+    this.store.setLoading(isLoading);
   }
 
-  getProject() {
-    this._http
-      .get<JProject>(`${this.baseUrl}/projects/140892`)
+  // Get all projects (public for anonymous users, all for authenticated users)
+  getAll() {
+    console.log('Getting all projects from:', `${this.baseUrl}/projects`);
+    this.setLoading(true);
+    this.http
+      .get<JProject[]>(`${this.baseUrl}/projects`)
       .pipe(
-        setLoading(this._store),
-        tap((project) => {
-          this._store.update((state) => ({
-              ...state,
-              ...project
-            }));
+        tap((projects) => {
+          console.log('Projects received:', projects);
+          this.store.update((state) => ({
+            ...state,
+            projects
+          }));
+          this.setLoading(false);
         }),
         catchError((error) => {
-          this._store.setError(error);
+          console.error('Error getting projects:', error);
+          this.store.setError(error);
+          this.setLoading(false);
+          return of(error);
+        })
+      )
+      .subscribe();
+  }
+
+  // Get a specific project by ID
+  getProject(projectId: string = '140892') {
+    this.http
+      .get<JProject>(`${this.baseUrl}/projects/${projectId}`)
+      .pipe(
+        setLoading(this.store),
+        tap((project) => {
+          this.store.update((state) => ({
+            ...state,
+            project
+          }));
+        }),
+        catchError((error) => {
+          this.store.setError(error);
           return of(error);
         })
       )
@@ -45,12 +78,12 @@ export class ProjectService {
 
   // Buscar comentários de uma issue
   getIssueComments(issueId: string) {
-    return this._http
+    return this.http
       .get<JComment[]>(`${this.baseUrl}/comments/issue/${issueId}`)
       .pipe(
         tap((comments) => {
           console.log('Comentários carregados:', comments);
-          const allIssues = this._store.getValue().issues;
+          const allIssues = this.store.getValue().issues;
           const issue = allIssues.find((x) => x.id === issueId);
           if (!issue) {
             return;
@@ -70,28 +103,26 @@ export class ProjectService {
   }
 
   updateProject(project: Partial<JProject>) {
-    // Verificar se o ID do projeto está definido
     if (!project.id) {
-      // Obter o ID do projeto do estado atual
-      const currentState = this._store.getValue();
-      if (currentState && currentState.id) {
-        project.id = currentState.id;
+      const currentState = this.store.getValue();
+      if (currentState.project?.id) {
+        project.id = currentState.project.id;
       } else {
-        return; // Não é possível atualizar sem um ID
+        return;
       }
     }
 
-    this._http
+    this.http
       .put<JProject>(`${this.baseUrl}/projects/${project.id}`, project)
       .pipe(
         tap((updatedProject) => {
-          this._store.update((state) => ({
+          this.store.update((state) => ({
             ...state,
-            ...updatedProject
+            project: updatedProject
           }));
         }),
         catchError((error) => {
-          this._store.setError(error);
+          this.store.setError(error);
           return of(error);
         })
       )
@@ -102,20 +133,22 @@ export class ProjectService {
     issue.updatedAt = DateUtil.getNow();
     issue.createdAt = DateUtil.getNow();
 
-    this._http
+    this.http
       .post<JIssue>(`${this.baseUrl}/issues`, issue)
       .pipe(
         tap((newIssue) => {
-          this._store.update((state) => {
+          this.store.update((state) => {
             const issues = [...state.issues, newIssue];
             return {
               ...state,
               issues
             };
           });
+          this._notificationService.success('Sucesso', 'Issue criada com sucesso!');
         }),
-        catchError((error) => {
-          this._store.setError(error);
+        catchError((error: HttpErrorResponse) => {
+          this.store.setError(error);
+          this._notificationService.handleHttpError(error);
           return of(error);
         })
       )
@@ -125,20 +158,22 @@ export class ProjectService {
   updateIssue(issue: JIssue) {
     issue.updatedAt = DateUtil.getNow();
 
-    this._http
+    this.http
       .put<JIssue>(`${this.baseUrl}/issues/${issue.id}`, issue)
       .pipe(
         tap((updatedIssue) => {
-          this._store.update((state) => {
+          this.store.update((state) => {
             const issues = arrayUpsert(state.issues, updatedIssue.id, updatedIssue);
             return {
               ...state,
               issues
             };
           });
+          this._notificationService.success('Sucesso', 'Issue atualizada com sucesso!');
         }),
-        catchError((error) => {
-          this._store.setError(error);
+        catchError((error: HttpErrorResponse) => {
+          this.store.setError(error);
+          this._notificationService.handleHttpError(error);
           return of(error);
         })
       )
@@ -146,20 +181,22 @@ export class ProjectService {
   }
 
   deleteIssue(issueId: string) {
-    this._http
+    this.http
       .delete(`${this.baseUrl}/issues/${issueId}`)
       .pipe(
         tap(() => {
-          this._store.update((state) => {
+          this.store.update((state) => {
             const issues = arrayRemove(state.issues, issueId);
             return {
               ...state,
               issues
             };
           });
+          this._notificationService.success('Sucesso', 'Issue excluída com sucesso!');
         }),
-        catchError((error) => {
-          this._store.setError(error);
+        catchError((error: HttpErrorResponse) => {
+          this.store.setError(error);
+          this._notificationService.handleHttpError(error);
           return of(error);
         })
       )
@@ -169,11 +206,11 @@ export class ProjectService {
   updateIssueComment(issueId: string, comment: JComment) {
     if (comment.id) {
       // Atualizar comentário existente
-      this._http
+      this.http
         .put<JComment>(`${this.baseUrl}/comments/${comment.id}`, comment)
         .pipe(
           tap((updatedComment) => {
-            const allIssues = this._store.getValue().issues;
+            const allIssues = this.store.getValue().issues;
             const issue = allIssues.find((x) => x.id === issueId);
             if (!issue) {
               return;
@@ -184,8 +221,9 @@ export class ProjectService {
               ...issue,
               comments
             });
+            this._notificationService.success('Sucesso', 'Comentário atualizado com sucesso!');
           }),
-          catchError((error) => {
+          catchError((error: HttpErrorResponse) => {
             // Se o comentário não for encontrado (404), criar um novo
             if (error.status === 404) {
               console.log('Comentário não encontrado, criando um novo');
@@ -196,11 +234,11 @@ export class ProjectService {
               }
 
               // Criar novo comentário usando POST
-              this._http
+              this.http
                 .post<JComment>(`${this.baseUrl}/comments`, comment)
                 .pipe(
                   tap((newComment) => {
-                    const allIssues = this._store.getValue().issues;
+                    const allIssues = this.store.getValue().issues;
                     const issue = allIssues.find((x) => x.id === issueId);
                     if (!issue) {
                       return;
@@ -211,10 +249,12 @@ export class ProjectService {
                       ...issue,
                       comments
                     });
+                    this._notificationService.success('Sucesso', 'Comentário adicionado com sucesso!');
                   }),
-                  catchError((postError) => {
+                  catchError((postError: HttpErrorResponse) => {
                     console.error('Erro ao criar comentário:', postError);
-                    this._store.setError(postError);
+                    this.store.setError(postError);
+                    this._notificationService.handleHttpError(postError);
                     return of(postError);
                   })
                 )
@@ -222,7 +262,8 @@ export class ProjectService {
               return of(null);
             }
 
-            this._store.setError(error);
+            this.store.setError(error);
+            this._notificationService.handleHttpError(error);
             return of(error);
           })
         )
@@ -235,11 +276,11 @@ export class ProjectService {
         comment.userId = comment.user.id;
       }
 
-      this._http
+      this.http
         .post<JComment>(`${this.baseUrl}/comments`, comment)
         .pipe(
           tap((newComment) => {
-            const allIssues = this._store.getValue().issues;
+            const allIssues = this.store.getValue().issues;
             const issue = allIssues.find((x) => x.id === issueId);
             if (!issue) {
               return;
@@ -250,14 +291,60 @@ export class ProjectService {
               ...issue,
               comments
             });
+            this._notificationService.success('Sucesso', 'Comentário adicionado com sucesso!');
           }),
-          catchError((error) => {
+          catchError((error: HttpErrorResponse) => {
             console.error('Erro ao criar comentário:', error);
-            this._store.setError(error);
+            this.store.setError(error);
+            this._notificationService.handleHttpError(error);
             return of(error);
           })
         )
         .subscribe();
     }
+  }
+
+  getProjectById(id: string) {
+    console.log('Getting project by ID:', id, 'from:', `${this.baseUrl}/projects/${id}`);
+    this.setLoading(true);
+    return this.http.get<JProject>(`${this.baseUrl}/projects/${id}`).pipe(
+      tap(project => {
+        console.log('Project received:', project);
+        this.store.update(state => ({
+          ...state,
+          project,
+          loading: false,
+          error: null
+        }));
+      }),
+      catchError(error => {
+        console.error('Error getting project:', error);
+        this.store.setError(error);
+        this.setLoading(false);
+        return of(null);
+      })
+    );
+  }
+
+  update(id: string, data: Partial<JProject>) {
+    console.log('Updating project:', id, 'with data:', data);
+    this.setLoading(true);
+    return this.http.put<JProject>(`${this.baseUrl}/projects/${id}`, data).pipe(
+      tap(project => {
+        console.log('Project updated successfully:', project);
+        this.store.update(state => ({
+          ...state,
+          project,
+          loading: false,
+          error: null
+        }));
+      }),
+      catchError(error => {
+        console.error('Error updating project:', error);
+        this.store.setError(error);
+        this.setLoading(false);
+        return of(null);
+      })
+    );
   }
 }

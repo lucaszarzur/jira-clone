@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthQuery } from '@trungk18/project/auth/auth.query';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { SearchDrawerComponent } from '../../search/search-drawer/search-drawer.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -13,7 +12,6 @@ import { AddIssueModalComponent } from '../../add-issue-modal/add-issue-modal.co
 export class NavbarLeftComponent implements OnInit {
   items: NavItem[];
   constructor(
-    public authQuery: AuthQuery,
     private _drawerService: NzDrawerService,
     private _modalService: NzModalService
   ) {}
@@ -22,6 +20,7 @@ export class NavbarLeftComponent implements OnInit {
     this.items = [
       new NavItem('search', 'Search issues', this.openSearchDrawler.bind(this)),
       new NavItem('plus', 'Create issue', this.openCreateIssueModal.bind(this))
+      // Removed project settings navigation temporarily
     ];
   }
 

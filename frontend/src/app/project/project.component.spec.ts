@@ -1,16 +1,19 @@
 import { ProjectComponent } from '@trungk18/project/project.component';
+import { of } from 'rxjs';
 
 
 describe('ProjectComponent', () => {
   let component: ProjectComponent;
 
+  const route: any = { snapshot: { params: {} } };
+  const projectQuery: any = { selectActive: () => of(null) };
   const projectService: any = {};
-  const authService: any = {};
 
   beforeEach(() => {
     component = new ProjectComponent(
-      projectService,
-      authService
+      route,
+      projectQuery,
+      projectService
     );
   });
 

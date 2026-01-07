@@ -8,33 +8,34 @@ import { Observable } from 'rxjs';
 import { JIssue } from '@trungk18/interface/issue';
 import { ProjectService } from '@trungk18/project/state/project/project.service';
 import { DeleteIssueModel } from '@trungk18/interface/ui-model/delete-issue-model';
+import { tap, map } from 'rxjs/operators';
 
 @Component({
-  selector: 'full-issue-detail',
+  selector: 'app-full-issue-detail',
   templateUrl: './full-issue-detail.component.html',
   styleUrls: ['./full-issue-detail.component.scss']
 })
 @UntilDestroy()
 export class FullIssueDetailComponent implements OnInit {
-  project: JProject;
+  project$: Observable<JProject>;
   issueById$: Observable<JIssue>;
   issueId: string;
-  get breadcrumbs(): string[] {
-    return [ProjectConst.Projects, this.project?.name, 'Issues', this.issueId];
-  }
+  breadcrumbs$: Observable<string[]>;
 
   constructor(
     private _router: Router,
-    private _route: ActivatedRoute,
+    private route: ActivatedRoute,
     private _projectQuery: ProjectQuery,
     private _projectService: ProjectService
-  ) {}
+  ) {
+    this.project$ = this._projectQuery.selectActive();
+    this.breadcrumbs$ = this.project$.pipe(
+      map(project => [ProjectConst.Projects, project?.name || '', 'Issues', this.issueId])
+    );
+  }
 
   ngOnInit(): void {
     this.getIssue();
-    this._projectQuery.all$.pipe(untilDestroyed(this)).subscribe((project) => {
-      this.project = project;
-    });
   }
 
   deleteIssue({issueId, deleteModalRef}: DeleteIssueModel) {
@@ -43,13 +44,11 @@ export class FullIssueDetailComponent implements OnInit {
     this.backHome();
   }
 
-  private getIssue() {
-    this.issueId = this._route.snapshot.paramMap.get(ProjectConst.IssueId);
-    if (!this.issueId) {
-      this.backHome();
-      return;
+  private getIssue(): void {
+    this.issueId = this.route.snapshot.paramMap.get('issueId');
+    if (this.issueId) {
+      this.issueById$ = this._projectQuery.issueById$(this.issueId);
     }
-    this.issueById$ = this._projectQuery.issueById$(this.issueId);
   }
 
   private backHome() {

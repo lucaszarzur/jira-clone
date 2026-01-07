@@ -11,9 +11,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { QuillModule, QuillConfig } from 'ngx-quill';
 import * as Sentry from '@sentry/angular';
 import { Router } from '@angular/router';
+import { HomeModule } from './home/home.module';
 
 // Importar a configuração do Quill
 import './project/config/quill-config';
@@ -47,9 +49,11 @@ const quillModuleConfig: QuillConfig = {
     AppRoutingModule,
     NzSpinModule,
     NzIconModule.forRoot([]),
+    NzNotificationModule,
     environment.production ? [] : AkitaNgDevtools,
     AkitaNgRouterStoreModule,
-    QuillModule.forRoot(quillModuleConfig)
+    QuillModule.forRoot(quillModuleConfig),
+    HomeModule
   ],
   providers: [
     {

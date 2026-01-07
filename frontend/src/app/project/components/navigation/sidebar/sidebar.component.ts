@@ -4,6 +4,7 @@ import { JProject } from '@trungk18/interface/project';
 import { SideBarLink } from '@trungk18/interface/ui-model/nav-link';
 import { SideBarLinks } from '@trungk18/project/config/sidebar';
 import { ProjectQuery } from '@trungk18/project/state/project/project.query';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
@@ -18,13 +19,11 @@ export class SidebarComponent implements OnInit {
     return this.expanded ? 240 : 15;
   }
 
-  project: JProject;
+  project$: Observable<JProject>;
   sideBarLinks: SideBarLink[];
 
-  constructor(private _projectQuery: ProjectQuery) {
-    this._projectQuery.all$.pipe(untilDestroyed(this)).subscribe((project) => {
-      this.project = project;
-    });
+  constructor(private projectQuery: ProjectQuery) {
+    this.project$ = this.projectQuery.selectActive();
   }
 
   ngOnInit(): void {

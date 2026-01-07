@@ -15,7 +15,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./backend/src/config/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 5s
@@ -23,24 +22,31 @@ services:
       retries: 5
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend-java
+      dockerfile: Dockerfile
     container_name: jira-clone-backend-dev
     restart: always
     depends_on:
       - mysql
     ports:
       - "3000:3000"
+      - "5005:5005"
     environment:
-      - NODE_ENV=development
+      - SPRING_PROFILES_ACTIVE=dev
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USER=jira_user
       - DB_PASSWORD=jira_password
       - DB_NAME=jira_clone
       - SEED_DATA=true
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production-must-be-at-least-256-bits-long-for-hs256
+      - CORS_ORIGINS=http://localhost:4200,http://localhost:3000
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     volumes:
-      - ./backend:/app
-      - /app/node_modules
+      - ./backend-java:/app
+      - ~/.m2:/root/.m2
+    command: ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments="-Dfile.encoding=UTF-8"
 
   frontend:
     build:
@@ -62,4 +68,5 @@ services:
       - ANGULAR_CLI_ANALYTICS=false
 
 volumes:
-  mysql-data: 
+  mysql-data:
+ 

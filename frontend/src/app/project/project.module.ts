@@ -13,6 +13,15 @@ import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzMessageModule } from 'ng-zorro-antd/message';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { QuillModule } from 'ngx-quill';
 import { TaskflowControlModule } from '../taskflow-control/taskflow-control.module';
 import { AddIssueModalComponent } from './components/add-issue-modal/add-issue-modal.component';
@@ -27,6 +36,7 @@ import { ResizerComponent } from './components/navigation/resizer/resizer.compon
 import { IssueResultComponent } from './components/search/issue-result/issue-result.component';
 import { SearchDrawerComponent } from './components/search/search-drawer/search-drawer.component';
 import { UserComponent } from './components/user/user.component';
+// Removed project settings components temporarily
 import { NZ_TASKFLOW_ICONS } from './config/icons';
 import { BoardComponent } from './pages/board/board.component';
 import { FullIssueDetailComponent } from './pages/full-issue-detail/full-issue-detail.component';
@@ -52,7 +62,8 @@ import { ProjectComponent } from './project.component';
     IssuePrioritySelectComponent,
     IssueReporterSelectComponent,
     IssueAssigneesSelectComponent,
-    ResizerComponent
+    ResizerComponent,
+    // Removed project settings components temporarily
   ],
   imports: [
     CommonModule,
@@ -65,6 +76,15 @@ import { ProjectComponent } from './project.component';
     NzNotificationModule,
     NzDrawerModule,
     NzPopoverModule,
+    NzTabsModule,
+    NzButtonModule,
+    NzMessageModule,
+    NzSpinModule,
+    NzCardModule,
+    NzTableModule,
+    NzAvatarModule,
+    NzInputModule,
+    NzCheckboxModule,
     DragDropModule,
     TextFieldModule,
     FormsModule,
