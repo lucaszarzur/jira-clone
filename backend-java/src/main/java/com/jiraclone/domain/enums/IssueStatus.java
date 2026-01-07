@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum IssueStatus {
     BACKLOG("Backlog"),
     SELECTED("Selected"),
-    IN_PROGRESS("InProgress"),
+    IN_PROGRESS("In Progress"),
     DONE("Done");
 
     private final String value;

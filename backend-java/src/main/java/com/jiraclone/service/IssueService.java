@@ -105,6 +105,11 @@ public class IssueService {
         }
 
         issue = issueRepository.save(issue);
+
+        // Reload issue to get updated relationships
+        issue = issueRepository.findById(issue.getId())
+            .orElseThrow(() -> new ResourceNotFoundException("Issue", "id", id));
+
         return IssueResponse.from(issue);
     }
 

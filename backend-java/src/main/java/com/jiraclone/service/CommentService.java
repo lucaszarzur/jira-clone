@@ -22,18 +22,21 @@ public class CommentService {
     private final IssueRepository issueRepository;
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public List<CommentResponse> getAllComments() {
         return commentRepository.findAll().stream()
             .map(CommentResponse::from)
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<CommentResponse> getCommentsByIssueId(String issueId) {
         return commentRepository.findByIssueIdOrderByCreatedAtAsc(issueId).stream()
             .map(CommentResponse::from)
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public CommentResponse getCommentById(String id) {
         Comment comment = commentRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", id));
