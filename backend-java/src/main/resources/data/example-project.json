@@ -2,7 +2,7 @@
   "id": "140892",
   "name": "TaskFlow Project Management",
   "url": "https://github.com/lucaszarzur/jira-clone",
-  "description": "A modern project management tool built with Angular, Akita and ng-zorro in the frontend and Node.js, Express, MySQL and Sequelize in the backend",
+  "description": "A modern project management tool built with Angular, Akita and ng-zorro in the frontend and Java (Spring Boot), MySQL and Hibernate in the backend",
   "category": "Software",
   "createdAt": "2025-05-04T16:00:00.000Z",
   "updatedAt": "2020-06-13T16:00:00.000Z",

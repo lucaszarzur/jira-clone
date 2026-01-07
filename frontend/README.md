@@ -1,4 +1,4 @@
-# TaskFlow - A Jira Clone built with Angular, Akita and ng-zorro in the frontend and Node.js, Express, MySQL and Sequelize in the backend
+# TaskFlow - A Jira Clone built with Angular, Akita and ng-zorro in the frontend and Java (Spring Boot) and MySQL in the backend
 
 > This project is a fork of [Trung Vo's Jira Clone](https://github.com/trungvose/jira-clone-angular) with significant improvements including:
 > - MySQL database backend instead of in-memory storage
@@ -83,10 +83,10 @@ This piece of work is also part of our technical series [angular-vietnam/100-day
 - [Netlify][netlify] for frontend deployment
 
 ### Backend
-- [Node.js][nodejs]
-- [Express][express]
+- [Java][java]
+- [Spring Boot][spring-boot]
 - [MySQL][mysql]
-- [Sequelize ORM][sequelize]
+- [Hibernate/JPA][hibernate]
 - [Docker][docker]
 - [Heroku][heroku] for backend deployment
 
@@ -99,11 +99,11 @@ This piece of work is also part of our technical series [angular-vietnam/100-day
 [quill]: https://github.com/KillerCodeMonkey/ngx-quill
 [netlify]: https://www.netlify.com/
 [heroku]: https://www.heroku.com/
-[nodejs]: https://nodejs.org/
-[express]: https://expressjs.com/
 [mysql]: https://www.mysql.com/
-[sequelize]: https://sequelize.org/
 [docker]: https://www.docker.com/
+[java]: https://www.java.com/
+[spring-boot]: https://spring.io/projects/spring-boot
+[hibernate]: https://hibernate.org/orm/
 
 ## High level design
 
@@ -240,6 +240,7 @@ Not all components have properly defined [aria attributes](https://developer.moz
 - `npm install`
 - `npm start` to start the frontend Angular development server
 - The app should run on `http://localhost:4200/`
+- If you run the backend locally, set `frontend/proxy.conf.json` to `http://localhost:3000`.
 
 ### Docker Setup
 
@@ -267,8 +268,8 @@ docker-compose up -d
 ```
 
 Isso criará:
-- Frontend compilado e otimizado, servido pelo Node.js (porta 4200)
-- Backend em modo de produção (porta 3000)
+- Frontend compilado e otimizado, servido pelo container do frontend (porta 4200)
+- Backend em modo de produção (porta 3001)
 - MySQL (porta 3306)
 
 #### Scripts Auxiliares
@@ -306,7 +307,7 @@ It was being tested on IE 11, Chrome and Firefox. For Safari, there are some min
 
 ## Author: Lucas Zarzur ✍️
 
-- A passionate full-stack developer with expertise in Angular, Node.js, and database technologies.
+- A passionate full-stack developer with expertise in Angular, Java, and database technologies.
 - Personal website: https://lucaszarzur.dev/
 - LinkedIn: https://www.linkedin.com/in/lucas-zarzur/
 - Product: https://meunutria.com/

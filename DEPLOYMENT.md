@@ -34,9 +34,10 @@ Otimizado para performance e segurança.
 ```
 
 Características:
-- Frontend: Aplicação Angular compilada e otimizada, servida pelo Node.js
+- Frontend: Aplicação Angular compilada e otimizada, servida pelo container de frontend
 - Backend: Modo de produção otimizado
 - Sem volumes para garantir que apenas a versão compilada seja utilizada
+ 
 
 ## Docker vs. Instalação Direta
 
