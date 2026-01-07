@@ -15,4 +15,13 @@ public enum IssueStatus {
     public String getValue() {
         return value;
     }
+
+    public static IssueStatus fromString(String text) {
+        for (IssueStatus status : IssueStatus.values()) {
+            if (status.value.equalsIgnoreCase(text)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant for value: " + text);
+    }
 }
