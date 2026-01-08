@@ -55,6 +55,19 @@
             </div>
         </div>
         <div class="flex-auto"></div>
+        <div *ngFor="let item of bottomItems"
+             class="item">
+            <div (click)="item.handler()"
+                 nz-tooltip
+                 [nzTooltipTitle]="item.tooltip"
+                 nzTooltipPlacement="right"
+                 class="itemIcon">
+                <i class="text-xl text-white"
+                   nz-icon
+                   [nzType]="item.icon"
+                   nzTheme="outline"></i>
+            </div>
+        </div>
         <div class="item">
             <a nz-popover
                nzPopoverPlacement="rightBottom"

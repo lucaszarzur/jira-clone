@@ -8,6 +8,7 @@ import { ImageUrlService } from '@trungk18/project/services/image-url.service';
 import { SafeHtml } from '@angular/platform-browser';
 import { quillConfiguration } from '@trungk18/project/config/editor';
 import { ProjectQuery } from '@trungk18/project/state/project/project.query';
+import { AuthService } from '@trungk18/core/services/auth.service';
 
 @Component({
   selector: 'issue-comment',
@@ -30,7 +31,8 @@ export class IssueCommentComponent implements OnInit {
   constructor(
     private _projectQuery: ProjectQuery,
     private projectService: ProjectService,
-    private _imageUrlService: ImageUrlService
+    private _imageUrlService: ImageUrlService,
+    private authService: AuthService
   ) {}
 
   @HostListener('window:keyup', ['$event'])
@@ -58,7 +60,29 @@ export class IssueCommentComponent implements OnInit {
         updatedAt: new Date().toISOString(),
         issueIds: []
       };
-      this.user = users?.[0] ?? this.comment?.user ?? fallbackUser;
+
+      // Usar o usuário autenticado se estiver criando um novo comentário
+      if (this.createMode) {
+        const currentUser = this.authService.currentUserValue;
+        if (currentUser) {
+          // Converter AuthUser para JUser
+          this.user = {
+            id: currentUser.id,
+            name: currentUser.name,
+            email: currentUser.email,
+            avatarUrl: currentUser.avatarUrl,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            issueIds: []
+          };
+        } else {
+          this.user = fallbackUser;
+        }
+      } else {
+        // Para comentários existentes, usar o usuário do comentário
+        this.user = this.comment?.user ?? fallbackUser;
+      }
+
       if (this.createMode && !this.comment) {
         this.comment = new JComment(this.issueId, this.user);
       }

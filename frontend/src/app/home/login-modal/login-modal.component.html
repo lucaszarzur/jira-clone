@@ -1,0 +1,50 @@
+<div class="login-modal">
+  <h2>Login</h2>
+  <form nz-form [formGroup]="loginForm" (ngSubmit)="login()">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired>Email</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Por favor, insira um email válido">
+        <input
+          nz-input
+          type="email"
+          formControlName="email"
+          placeholder="seu.email@exemplo.com"
+        />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired>Senha</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Por favor, insira sua senha">
+        <input
+          nz-input
+          type="password"
+          formControlName="password"
+          placeholder="Senha"
+        />
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="login-actions">
+      <button nz-button type="button" (click)="cancel()">Cancelar</button>
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="isLoading"
+        type="submit"
+      >
+        Entrar
+      </button>
+    </div>
+  </form>
+
+  <div class="demo-users">
+    <p><strong>Usuários de demonstração:</strong></p>
+    <ul>
+      <li>lucas.zarzur@taskflow.com / password</li>
+      <li>thor@taskflow.com / password</li>
+      <li>spider.man@taskflow.com / password</li>
+      <li class="admin-user">iron.man@taskflow.com / password (Admin)</li>
+    </ul>
+  </div>
+</div>

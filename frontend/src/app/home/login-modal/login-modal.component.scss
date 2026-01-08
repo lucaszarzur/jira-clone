@@ -1,0 +1,118 @@
+.login-modal {
+  padding: 32px;
+  background: white;
+
+  h2 {
+    margin-bottom: 32px;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    color: #172b4d;
+  }
+
+  nz-form-item {
+    margin-bottom: 20px;
+
+    ::ng-deep {
+      .ant-form-item-label > label {
+        color: #172b4d;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .ant-input {
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 3px;
+        border: 2px solid #dfe1e6;
+        transition: border-color 0.2s ease;
+
+        &:focus, &:hover {
+          border-color: #0052cc;
+        }
+
+        &::placeholder {
+          color: #999;
+        }
+      }
+
+      .ant-form-item-explain-error {
+        color: #de350b;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .login-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 3px;
+      transition: all 0.2s ease;
+      height: auto;
+
+      &[nz-button]:not([nzType="primary"]) {
+        background: white;
+        color: #42526e;
+        border: 2px solid #dfe1e6;
+
+        &:hover {
+          background: #f4f5f7;
+        }
+      }
+
+      &[nzType="primary"] {
+        background: #0052cc;
+        color: white;
+        border: 2px solid #0052cc;
+
+        &:hover:not(:disabled) {
+          background: #0747a6;
+          border-color: #0747a6;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .demo-users {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f4f5f7;
+    border-radius: 3px;
+    border: 1px solid #dfe1e6;
+
+    p {
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #172b4d;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 12px;
+      color: #5e6c84;
+
+      li {
+        margin-bottom: 4px;
+        font-family: 'Courier New', monospace;
+
+        &.admin-user {
+          color: #0052cc;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

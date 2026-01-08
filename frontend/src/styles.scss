@@ -21,3 +21,44 @@
     transform: translate(-50%, -50%);
   }
 }
+
+// Global button styles
+@layer components {
+  button[nz-button] {
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+  }
+
+  button[nz-button][nzType="primary"] {
+    background: #0052cc;
+    color: white;
+    border: 2px solid #0052cc;
+  }
+
+  button[nz-button][nzType="primary"]:hover:not(:disabled) {
+    background: #0747a6;
+    border-color: #0747a6;
+  }
+
+  button[nz-button][nzType="primary"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  button[nz-button]:not([nzType="primary"]) {
+    background: white;
+    color: #42526e;
+    border: 2px solid #dfe1e6;
+  }
+
+  button[nz-button]:not([nzType="primary"]):hover:not(:disabled) {
+    background: #f4f5f7;
+  }
+
+  button[nz-button]:not([nzType="primary"]):disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

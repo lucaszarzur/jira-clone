@@ -32,6 +32,7 @@
 
   .auth-buttons {
     display: flex;
+    align-items: center;
     gap: 1rem;
 
     button {
@@ -42,6 +43,16 @@
       transition: all 0.2s;
     }
 
+    .login-button {
+      background-color: #0052cc;
+      border: 1px solid #0052cc;
+      color: white;
+
+      &:hover {
+        background-color: #0047b3;
+      }
+    }
+
     .dashboard-button {
       background-color: #0052cc;
       border: 1px solid #0052cc;
@@ -49,6 +60,38 @@
 
       &:hover {
         background-color: #0047b3;
+      }
+    }
+
+    .logout-button {
+      background-color: transparent;
+      border: 1px solid #dfe1e6;
+      color: #42526e;
+
+      &:hover {
+        background-color: #f4f5f7;
+      }
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background-color: #f4f5f7;
+      border-radius: 3px;
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .user-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #172b4d;
       }
     }
   }

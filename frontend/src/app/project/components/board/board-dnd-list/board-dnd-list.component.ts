@@ -43,18 +43,20 @@ export class BoardDndListComponent implements OnInit {
     const newIssue: JIssue = { ...event.item.data };
     const newIssues = [...event.container.data];
     if (event.previousContainer === event.container) {
+      // Movendo dentro da mesma coluna - apenas atualiza posições
       moveItemInArray(newIssues, event.previousIndex, event.currentIndex);
-      this.updateListPosition(newIssues);
+      this.updateListPosition(newIssues, false);
     } else {
+      // Movendo entre colunas - atualiza status e posições
       transferArrayItem(
         event.previousContainer.data,
         newIssues,
         event.previousIndex,
         event.currentIndex
       );
-      this.updateListPosition(newIssues);
+      this.updateListPosition(newIssues, false);
       newIssue.status = event.container.id as IssueStatus;
-      this._projectService.updateIssue(newIssue);
+      this._projectService.updateIssue(newIssue, true); // Mostrar notificação apenas para mudança de status
     }
   }
 
@@ -83,10 +85,10 @@ export class BoardDndListComponent implements OnInit {
     return dateFns.isAfter(inputDate, dateFns.subDays(now, 3));
   }
 
-  private updateListPosition(newList: JIssue[]) {
+  private updateListPosition(newList: JIssue[], showNotification: boolean = false) {
     newList.forEach((issue, idx) => {
       const newIssueWithNewPosition = { ...issue, listPosition: idx + 1 };
-      this._projectService.updateIssue(newIssueWithNewPosition);
+      this._projectService.updateIssue(newIssueWithNewPosition, showNotification);
     });
   }
 }

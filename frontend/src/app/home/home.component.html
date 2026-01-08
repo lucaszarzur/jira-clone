@@ -5,7 +5,18 @@
       <h1>TaskFlow</h1>
     </div>
     <div class="auth-buttons">
-      <button class="dashboard-button" (click)="navigateToDashboard()">Open Board</button>
+      <ng-container *ngIf="currentUser$ | async as user; else loginButton">
+        <div class="user-info">
+          <img [src]="user.avatarUrl" [alt]="user.name" class="user-avatar" />
+          <span class="user-name">{{ user.name }}</span>
+        </div>
+        <button class="dashboard-button" (click)="navigateToDashboard()">Open Board</button>
+        <button class="logout-button" (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #loginButton>
+        <button class="login-button" (click)="openLoginModal()">Login</button>
+        <button class="dashboard-button" (click)="navigateToDashboard()">Open Board</button>
+      </ng-template>
     </div>
   </header>
 

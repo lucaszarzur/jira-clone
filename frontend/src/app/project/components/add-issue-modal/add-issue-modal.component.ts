@@ -12,6 +12,7 @@ import { JUser } from '@trungk18/interface/user';
 import { tap } from 'rxjs/operators';
 import { NoWhitespaceValidator } from '@trungk18/core/validators/no-whitespace.validator';
 import { DateUtil } from '@trungk18/project/utils/date';
+import { AuthService } from '@trungk18/core/services/auth.service';
 
 @Component({
   selector: 'add-issue-modal',
@@ -33,20 +34,19 @@ export class AddIssueModalComponent implements OnInit {
     private _fb: FormBuilder,
     private _modalRef: NzModalRef,
     private _projectService: ProjectService,
-    private _projectQuery: ProjectQuery) {}
+    private _projectQuery: ProjectQuery,
+    private authService: AuthService) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.reporterUsers$ = this._projectQuery.users$.pipe(
-      untilDestroyed(this),
-      tap((users) => {
-        const [user] = users;
-        if (user) {
-          this.f.reporterId.patchValue(user.id);
-        }
-      })
-    );
 
+    // Definir o usuário logado como reporter
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser) {
+      this.f.reporterId.patchValue(currentUser.id);
+    }
+
+    this.reporterUsers$ = this._projectQuery.users$;
     this.assignees$ = this._projectQuery.users$;
   }
 

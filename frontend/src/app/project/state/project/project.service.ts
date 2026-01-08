@@ -161,7 +161,7 @@ export class ProjectService {
       .subscribe();
   }
 
-  updateIssue(issue: JIssue) {
+  updateIssue(issue: JIssue, showNotification: boolean = true) {
     issue.updatedAt = DateUtil.getNow();
 
     this.http
@@ -175,7 +175,9 @@ export class ProjectService {
               issues
             };
           });
-          this._notificationService.success('Sucesso', 'Issue atualizada com sucesso!');
+          if (showNotification) {
+            this._notificationService.success('Sucesso', 'Issue atualizada com sucesso!');
+          }
         }),
         catchError((error: HttpErrorResponse) => {
           this.store.setError(error);
@@ -350,12 +352,13 @@ export class ProjectService {
           loading: false,
           error: null
         }));
+        this.setLoading(false);
       }),
       catchError(error => {
         console.error('Error updating project:', error);
         this.store.setError(error);
         this.setLoading(false);
-        return of(null);
+        throw error;
       })
     );
   }

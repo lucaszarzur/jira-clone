@@ -5,7 +5,9 @@ import {
   SearchOutline,
   CloseOutline,
   TwitterOutline,
-  EditOutline
+  EditOutline,
+  ArrowLeftOutline,
+  PoweroffOutline
 } from '@ant-design/icons-angular/icons';
 
 export const NZ_TASKFLOW_ICONS: IconDefinition[] = [
@@ -14,5 +16,7 @@ export const NZ_TASKFLOW_ICONS: IconDefinition[] = [
   SearchOutline,
   CloseOutline,
   TwitterOutline,
-  EditOutline
+  EditOutline,
+  ArrowLeftOutline,
+  PoweroffOutline
 ];
