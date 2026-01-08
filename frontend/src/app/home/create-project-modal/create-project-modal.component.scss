@@ -1,0 +1,73 @@
+.create-project-modal {
+  padding: 32px;
+  background: white;
+
+  h2 {
+    margin-bottom: 32px;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    color: #172b4d;
+  }
+
+  nz-form-item {
+    margin-bottom: 20px;
+
+    ::ng-deep {
+      .ant-form-item-label > label {
+        color: #172b4d;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .ant-input,
+      .ant-select-selector {
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 3px;
+        border: 2px solid #dfe1e6;
+        transition: border-color 0.2s ease;
+
+        &:focus, &:hover {
+          border-color: #0052cc;
+        }
+      }
+
+      textarea.ant-input {
+        padding: 10px 12px;
+      }
+
+      .ant-form-item-explain-error {
+        color: #de350b;
+        font-size: 12px;
+      }
+
+      .ant-select-focused .ant-select-selector {
+        border-color: #0052cc;
+      }
+    }
+
+    .checkbox-hint {
+      color: #5e6c84;
+      font-size: 12px;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 3px;
+      transition: all 0.2s ease;
+      height: auto;
+    }
+  }
+}

@@ -1,0 +1,72 @@
+<div class="create-project-modal">
+  <h2>Criar Novo Projeto</h2>
+  <form nz-form [formGroup]="projectForm" (ngSubmit)="createProject()">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired>Nome do Projeto</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Por favor, insira o nome do projeto">
+        <input
+          nz-input
+          formControlName="name"
+          placeholder="Ex: TaskFlow Project"
+        />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24">URL</nz-form-label>
+      <nz-form-control [nzSpan]="24">
+        <input
+          nz-input
+          formControlName="url"
+          placeholder="https://github.com/seu-usuario/seu-projeto"
+        />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24">Descrição</nz-form-label>
+      <nz-form-control [nzSpan]="24">
+        <textarea
+          nz-input
+          formControlName="description"
+          placeholder="Descrição do projeto"
+          [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+        ></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="24" nzRequired>Categoria</nz-form-label>
+      <nz-form-control [nzSpan]="24" nzErrorTip="Por favor, selecione uma categoria">
+        <nz-select formControlName="category" nzPlaceHolder="Selecione uma categoria">
+          <nz-option
+            *ngFor="let category of categories"
+            [nzValue]="category.value"
+            [nzLabel]="category.label"
+          ></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control [nzSpan]="24">
+        <label nz-checkbox formControlName="isPublic">
+          Projeto Público
+          <span class="checkbox-hint">(Qualquer pessoa pode visualizar)</span>
+        </label>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div class="form-actions">
+      <button nz-button type="button" (click)="cancel()">Cancelar</button>
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="isLoading"
+        type="submit"
+      >
+        Criar Projeto
+      </button>
+    </div>
+  </form>
+</div>

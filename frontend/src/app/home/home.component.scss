@@ -53,6 +53,16 @@
       }
     }
 
+    .create-project-button {
+      background-color: #00875a;
+      border: 1px solid #00875a;
+      color: white;
+
+      &:hover {
+        background-color: #006644;
+      }
+    }
+
     .dashboard-button {
       background-color: #0052cc;
       border: 1px solid #0052cc;

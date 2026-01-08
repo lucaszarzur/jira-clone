@@ -362,4 +362,30 @@ export class ProjectService {
       })
     );
   }
+
+  createProject(data: Partial<JProject>) {
+    console.log('Creating project with data:', data);
+    this.setLoading(true);
+    return this.http.post<JProject>(`${this.baseUrl}/projects`, data).pipe(
+      tap(project => {
+        console.log('Project created successfully:', project);
+        this.store.update(state => {
+          const projects = [...(state.projects || []), project];
+          return {
+            ...state,
+            projects,
+            loading: false,
+            error: null
+          };
+        });
+        this.setLoading(false);
+      }),
+      catchError(error => {
+        console.error('Error creating project:', error);
+        this.store.setError(error);
+        this.setLoading(false);
+        throw error;
+      })
+    );
+  }
 }

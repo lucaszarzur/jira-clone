@@ -40,9 +40,9 @@
             </textarea>
         </div>
         <div class="form-actions">
-            <button 
-                nz-button 
-                nzType="primary" 
+            <button
+                nz-button
+                nzType="primary"
                 [disabled]="projectForm.invalid"
                 type="submit"
             >
@@ -50,4 +50,102 @@
             </button>
         </div>
     </form>
+
+    <!-- Members Management Section -->
+    <div class="members-section mt-12">
+        <div class="text-2xl font-medium mb-6">Membros do Projeto</div>
+
+        <!-- Add Member Form -->
+        <div class="add-member-form">
+            <div class="flex gap-3 items-end">
+                <div class="flex-1">
+                    <label class="label">Adicionar Membro</label>
+                    <select
+                        class="form-input"
+                        [(ngModel)]="selectedUserId"
+                        [disabled]="availableUsers.length === 0"
+                    >
+                        <option [ngValue]="null">Selecione um usuário</option>
+                        <option *ngFor="let user of availableUsers" [ngValue]="user.id">
+                            {{ user.name }} ({{ user.email }})
+                        </option>
+                    </select>
+                </div>
+                <div class="w-48">
+                    <label class="label">Permissão</label>
+                    <select
+                        class="form-input"
+                        [(ngModel)]="selectedRole"
+                    >
+                        <option [ngValue]="projectRoles.ADMIN">Admin</option>
+                        <option [ngValue]="projectRoles.MEMBER">Membro</option>
+                        <option [ngValue]="projectRoles.VIEWER">Visualizador</option>
+                    </select>
+                </div>
+                <button
+                    nz-button
+                    nzType="primary"
+                    [disabled]="!selectedUserId"
+                    (click)="addMember()"
+                    class="add-member-button"
+                >
+                    Adicionar
+                </button>
+            </div>
+        </div>
+
+        <!-- Members List -->
+        <div class="members-list mt-6">
+            <nz-spin [nzSpinning]="isLoadingPermissions">
+                <div *ngIf="permissions.length > 0; else noMembers" class="members-table">
+                    <div class="member-row header-row">
+                        <div class="member-info">Usuário</div>
+                        <div class="member-role">Permissão</div>
+                        <div class="member-actions">Ações</div>
+                    </div>
+                    <div *ngFor="let permission of permissions" class="member-row">
+                        <div class="member-info">
+                            <img
+                                [src]="permission.user.avatarUrl"
+                                [alt]="permission.user.name"
+                                class="member-avatar"
+                            />
+                            <div class="member-details">
+                                <div class="member-name">{{ permission.user.name }}</div>
+                                <div class="member-email">{{ permission.user.email }}</div>
+                            </div>
+                        </div>
+                        <div class="member-role">
+                            <select
+                                class="role-select"
+                                [ngModel]="permission.role"
+                                (ngModelChange)="updateMemberRole(permission, $event)"
+                                [ngClass]="getRoleBadgeClass(permission.role)"
+                            >
+                                <option [ngValue]="projectRoles.ADMIN">Admin</option>
+                                <option [ngValue]="projectRoles.MEMBER">Membro</option>
+                                <option [ngValue]="projectRoles.VIEWER">Visualizador</option>
+                            </select>
+                        </div>
+                        <div class="member-actions">
+                            <button
+                                nz-button
+                                nzType="default"
+                                nzDanger
+                                (click)="removeMember(permission)"
+                                class="remove-button"
+                            >
+                                Remover
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #noMembers>
+                    <div class="no-members">
+                        <p>Nenhum membro no projeto ainda.</p>
+                    </div>
+                </ng-template>
+            </nz-spin>
+        </div>
+    </div>
 </div>

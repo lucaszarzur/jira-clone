@@ -7,6 +7,7 @@ import { JProject } from '@trungk18/interface/project';
 import { AuthService, AuthUser } from '../core/services/auth.service';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { LoginModalComponent } from './login-modal/login-modal.component';
+import { CreateProjectModalComponent } from './create-project-modal/create-project-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -70,5 +71,21 @@ export class HomeComponent implements OnInit {
     // Reload projects to show only public ones
     this.projectService.getAll();
     window.location.reload();
+  }
+
+  openCreateProjectModal(): void {
+    const modalRef = this.modal.create({
+      nzTitle: null,
+      nzContent: CreateProjectModalComponent,
+      nzFooter: null,
+      nzWidth: 600
+    });
+
+    modalRef.afterClose.subscribe(result => {
+      if (result) {
+        // Reload projects after creation
+        this.projectService.getAll();
+      }
+    });
   }
 }

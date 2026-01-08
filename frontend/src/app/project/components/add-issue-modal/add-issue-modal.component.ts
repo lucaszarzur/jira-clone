@@ -9,7 +9,7 @@ import { ProjectQuery } from '@trungk18/project/state/project/project.query';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { JUser } from '@trungk18/interface/user';
-import { tap } from 'rxjs/operators';
+import { tap, take } from 'rxjs/operators';
 import { NoWhitespaceValidator } from '@trungk18/core/validators/no-whitespace.validator';
 import { DateUtil } from '@trungk18/project/utils/date';
 import { AuthService } from '@trungk18/core/services/auth.service';
@@ -65,19 +65,29 @@ export class AddIssueModalComponent implements OnInit {
     if (this.issueForm.invalid) {
       return;
     }
-    const now = DateUtil.getNow();
-    const issue: JIssue = {
-      ...this.issueForm.getRawValue(),
-      id: IssueUtil.getRandomId(),
-      status: IssueStatus.BACKLOG,
-      createdAt: now,
-      updatedAt: now,
-      projectId: '140892' // ID do projeto padrão
-    };
 
-    // Criar uma nova issue usando o método HTTP POST
-    this._projectService.createIssue(issue);
-    this.closeModal();
+    const now = DateUtil.getNow();
+
+    // Obter o projeto ativo atual
+    this._projectQuery.selectActive().pipe(take(1)).subscribe(project => {
+      if (!project) {
+        console.error('Nenhum projeto ativo encontrado');
+        return;
+      }
+
+      const issue: JIssue = {
+        ...this.issueForm.getRawValue(),
+        id: IssueUtil.getRandomId(),
+        status: IssueStatus.BACKLOG,
+        createdAt: now,
+        updatedAt: now,
+        projectId: project.id
+      };
+
+      // Criar uma nova issue usando o método HTTP POST
+      this._projectService.createIssue(issue);
+      this.closeModal();
+    });
   }
 
   cancel() {
