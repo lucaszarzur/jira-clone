@@ -31,12 +31,44 @@ Este projeto é um fork de [https://github.com/trungvose/jira-clone-angular](htt
 - Docker
 
 # Funcionalidades
-- Visualização de projetos, issues e usuários
+
+## Autenticação e Segurança
+- Sistema de autenticação JWT real com Spring Security
+- Login modal com usuários demo
+- Gerenciamento de tokens com refresh automático
+- Proteção de rotas e endpoints
+- Dois níveis de permissões (Sistema e Projeto)
+
+## Gerenciamento de Projetos
+- Visualização de projetos públicos e privados
+- Criação de novos projetos
+- Edição de informações do projeto
+- Controle de visibilidade (público/privado)
+- Gerenciamento de membros do projeto:
+  - Adicionar membros
+  - Remover membros
+  - Alterar permissões (Admin/Membro/Visualizador)
+
+## Gerenciamento de Issues
 - Criação, edição e exclusão de issues
+- Drag & Drop para alterar status (Backlog, Selected, In Progress, Done)
+- Atribuição de múltiplos usuários (assignees)
+- Alteração de tipo (Story, Task, Bug)
+- Alteração de prioridade (Lowest, Low, Medium, High, Highest)
+- Filtros por usuário, texto e status
+- Auto-refresh para sincronização em tempo real (múltiplas abas)
+
+## Comentários e Colaboração
 - Adição de comentários às issues
-- Atribuição de issues a usuários
-- Alteração de status, prioridade e tipo de issues
+- Edição de comentários próprios
+- Suporte a imagens em comentários
+- Identificação do usuário logado
+
+## Persistência e Performance
 - Persistência de dados em banco MySQL
+- Cache de estado com Akita
+- Sincronização automática entre abas
+- Otimizações de performance
 
 ## Demonstração
 Confira o **live demo** -> https://jira.lucaszarzur.dev
@@ -63,6 +95,8 @@ O banco de dados MySQL contém as seguintes tabelas:
 - `issues` - Issues/tarefas
 - `comments` - Comentários nas issues
 - `issue_users` - Relação entre issues e usuários (assignees)
+- `permissions` - Permissões de usuários em projetos (Admin/Membro/Visualizador)
+- `project_users` - Relação entre projetos e usuários
 
 
 ## Requisitos
