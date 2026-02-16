@@ -5,7 +5,8 @@ import { JComment } from './comment';
 export enum IssueType {
   STORY = 'Story',
   TASK = 'Task',
-  BUG = 'Bug'
+  BUG = 'Bug',
+  SUBTASK = 'Subtask'
 }
 
 export enum IssueStatus {
@@ -38,6 +39,23 @@ export const IssuePriorityColors = {
   [IssuePriority.LOW]: '#2D8738',
   [IssuePriority.LOWEST]: '#57A55A'
 };
+export interface SubtaskSummary {
+  id: string;
+  title: string;
+  type: IssueType;
+  status: IssueStatus;
+  priority: IssuePriority;
+}
+
+export interface ParentIssueSummary {
+  id: string;
+  title: string;
+  type: IssueType;
+  status: IssueStatus;
+  priority: IssuePriority;
+  projectId: string;
+}
+
 export interface JIssue {
   id: string;
   title: string;
@@ -55,5 +73,8 @@ export interface JIssue {
   userIds: string[];
   comments: JComment[];
   projectId: string;
+  parentIssueId?: string;
+  parentIssue?: ParentIssueSummary;
+  subtasks?: SubtaskSummary[];
 }
 /* eslint-enable no-shadow */

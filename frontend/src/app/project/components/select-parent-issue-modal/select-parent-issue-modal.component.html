@@ -1,0 +1,58 @@
+<div class="modal-container">
+  <div class="modal-header">
+    <h2 class="text-xl font-semibold">{{ modalTitle }}</h2>
+    <j-button icon="times"
+              [iconSize]="24"
+              (click)="cancel()"
+              [className]="'btn-empty'">
+    </j-button>
+  </div>
+
+  <div class="modal-body">
+    <p class="mb-4 text-textMedium">{{ modalDescription }}</p>
+
+    <div class="search-box mb-4">
+      <input type="text"
+             class="form-input"
+             placeholder="Search issues..."
+             [(ngModel)]="searchTerm"
+             (ngModelChange)="onSearch($event)" />
+    </div>
+
+    <div class="issues-list">
+      <div *ngFor="let issue of availableIssues$ | async"
+           class="issue-item"
+           [class.selected]="isSelected(issue.id)"
+           (click)="selectParent(issue.id)">
+        <div class="flex items-center">
+          <svg-icon [name]="issue.type.toLowerCase()" [size]="20" class="mr-2"></svg-icon>
+          <div class="flex-1">
+            <div class="issue-title">{{ issue.title }}</div>
+            <div class="issue-id text-13 text-textMedium">{{ issue.type }}-{{ issue.id }}</div>
+          </div>
+          <svg-icon *ngIf="isSelected(issue.id)"
+                    name="check"
+                    [size]="20"
+                    class="text-primary">
+          </svg-icon>
+        </div>
+      </div>
+
+      <div *ngIf="(availableIssues$ | async)?.length === 0" class="empty-state">
+        <p class="text-textMedium">No available issues found</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <j-button className="btn-primary mr-2"
+              [disabled]="!selectedParentId"
+              (click)="confirm()">
+      {{ confirmButtonText }}
+    </j-button>
+    <j-button className="btn-empty"
+              (click)="cancel()">
+      Cancel
+    </j-button>
+  </div>
+</div>

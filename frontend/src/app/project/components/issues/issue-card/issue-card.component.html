@@ -5,7 +5,7 @@
             {{ issue.title }}
         </p>
         <div class="flex items-center justify-between">
-            <div class="flex items-center ml-1">            
+            <div class="flex items-center ml-1">
                 <j-avatar *ngFor="let user of assignees"
                           [className]="'shadow-outline-white -ml-1'"
                           [size]="24"
@@ -14,12 +14,22 @@
                           nzTooltipTitle="Assignee: {{ user.name }}"
                           nzTooltipPlacement="bottom"
                           [avatarUrl]="user.avatarUrl">
-                </j-avatar>                
+                </j-avatar>
                 <span [class.ml-3]="assignees?.length" class="uppercase">
                     {{issue.type}}-{{issue.id}}
                 </span>
             </div>
             <div class="flex items-center">
+                <div *ngIf="hasSubtasks"
+                     class="subtask-badge"
+                     nz-tooltip
+                     [nzTooltipMouseEnterDelay]="0.3"
+                     [nzTooltipTitle]="subtaskTooltip"
+                     nzTooltipPlacement="bottom">
+                    <svg-icon [name]="'subtask'" [size]="14"></svg-icon>
+                    <span class="subtask-count">{{ subtaskCount }}</span>
+                </div>
+
                 <svg-icon class="mr-1 text-textMedium"
                           [name]="issueTypeIcon"
                           nz-tooltip
@@ -37,7 +47,21 @@
                           [size]="20"
                           [style.color]="priorityIcon.color">
                 </svg-icon>
-            </div>            
+            </div>
+        </div>
+    </div>
+
+    <!-- Nested Subtasks -->
+    <div *ngIf="hasSubtasks" class="subtasks-nested">
+        <div *ngFor="let subtask of issue.subtasks"
+             (click)="openIssueModal(subtask.id)"
+             class="subtask-nested-item">
+            <svg-icon [name]="'subtask'" [size]="14" class="subtask-icon"></svg-icon>
+            <span class="subtask-title">{{ subtask.title }}</span>
+            <span class="subtask-status-badge"
+                  [class.completed]="subtask.status === 'Done'">
+                {{ getStatusShort(subtask.status) }}
+            </span>
         </div>
     </div>
 </div>

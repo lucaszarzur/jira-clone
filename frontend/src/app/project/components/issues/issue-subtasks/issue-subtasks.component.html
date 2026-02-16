@@ -1,0 +1,44 @@
+<div class="subtasks-section" *ngIf="issue && issue.type !== 'Subtask'">
+  <div class="subtasks-header">
+    <div class="subtasks-title">
+      <span class="font-semibold text-textDark">Subtasks</span>
+      <span class="text-textMedium ml-2" *ngIf="totalCount > 0">({{ completedCount }} of {{ totalCount }} completed)</span>
+    </div>
+    <div *ngIf="canEdit" nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" nzPlacement="bottomRight">
+      <j-button [icon]="'plus'"
+                [iconSize]="16"
+                [className]="'btn-empty text-textMedium hover:text-primary'">
+        Add subtask
+      </j-button>
+    </div>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item (click)="addSubtask()">
+          <i nz-icon nzType="plus" nzTheme="outline"></i>
+          Create new subtask
+        </li>
+        <li nz-menu-item (click)="convertToSubtask()">
+          <i nz-icon nzType="swap" nzTheme="outline"></i>
+          Convert existing issue
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+  </div>
+
+  <div class="subtasks-list" *ngIf="totalCount > 0">
+    <div *ngFor="let subtask of subtasks"
+         class="subtask-item"
+         (click)="openSubtask(subtask.id)">
+      <svg-icon [name]="'subtask'" [size]="16" class="subtask-icon"></svg-icon>
+      <span class="subtask-title">{{ subtask.title }}</span>
+      <span class="subtask-status"
+            [class.completed]="subtask.status === 'Done'">
+        {{ subtask.status }}
+      </span>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="totalCount === 0">
+    <p class="text-textMedium text-13">No subtasks yet. Click "Add subtask" to create one.</p>
+  </div>
+</div>

@@ -62,6 +62,9 @@ public class Issue {
     @Column(name = "project_id", nullable = false)
     private String projectId;
 
+    @Column(name = "parent_issue_id")
+    private String parentIssueId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -91,6 +94,18 @@ public class Issue {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Comment> comments = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_issue_id", insertable = false, updatable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Issue parentIssue;
+
+    @OneToMany(mappedBy = "parentIssue", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Issue> subtasks = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

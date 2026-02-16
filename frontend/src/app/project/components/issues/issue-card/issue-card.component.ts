@@ -20,6 +20,22 @@ export class IssueCardComponent implements OnChanges, OnInit {
   issueTypeIcon: string;
   priorityIcon: IssuePriorityIcon;
 
+  get hasSubtasks(): boolean {
+    return this.issue?.subtasks && this.issue.subtasks.length > 0;
+  }
+
+  get subtaskCount(): number {
+    return this.issue?.subtasks?.length || 0;
+  }
+
+  get completedSubtaskCount(): number {
+    return this.issue?.subtasks?.filter(st => st.status === 'Done').length || 0;
+  }
+
+  get subtaskTooltip(): string {
+    return `${this.completedSubtaskCount} of ${this.subtaskCount} subtasks completed`;
+  }
+
   constructor(private _projectQuery: ProjectQuery, private _modalService: NzModalService) {}
 
   ngOnInit(): void {
@@ -46,5 +62,15 @@ export class IssueCardComponent implements OnChanges, OnInit {
         issue$: this._projectQuery.issueById$(issueId)
       }
     });
+  }
+
+  getStatusShort(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      'Backlog': 'BL',
+      'Selected': 'SEL',
+      'In Progress': 'IP',
+      'Done': 'DN'
+    };
+    return statusMap[status] || status;
   }
 }

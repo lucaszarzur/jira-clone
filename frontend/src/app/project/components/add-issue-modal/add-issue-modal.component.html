@@ -1,7 +1,7 @@
 <div class="px-8 py-5">
     <div class="flex items-center py-3 text-textDarkest">
         <div class="text-xl">
-            Create issue
+            {{ isSubtask ? 'Create subtask' : 'Create issue' }}
         </div>
         <div class="flex-auto"></div>
         <j-button icon="times"
@@ -9,6 +9,13 @@
                   (click)="closeModal()"
                   [className]="'btn-empty'">
         </j-button>
+    </div>
+    <div *ngIf="isSubtask && parentIssue" class="parent-issue-info">
+        <div class="flex items-center text-13 text-textMedium mb-3 p-3 bg-backgroundLight rounded">
+            <svg-icon [name]="parentIssue.type.toLowerCase()" [size]="16" class="mr-2"></svg-icon>
+            <span class="font-medium">Parent issue:</span>
+            <span class="ml-2">{{ parentIssue.title }}</span>
+        </div>
     </div>
     <form class="issue-form"
           [formGroup]="issueForm">
@@ -65,7 +72,7 @@
                       type="submit"
                       [disabled]="issueForm?.invalid"
                       (click)="submitForm()">
-                Create Issue
+                {{ isSubtask ? 'Create Subtask' : 'Create Issue' }}
             </j-button>
             <j-button className="btn-empty"
                       (click)="cancel()">

@@ -10,6 +10,16 @@
                 Give Feedback
             </j-button>
         </a>
+        <j-button *ngIf="(canEdit$ | async) && canConvertToSubtask"
+                  [className]="'btn-empty'"
+                  (click)="openConvertToSubtaskModal()">
+            Convert to Subtask
+        </j-button>
+        <j-button *ngIf="(canEdit$ | async) && issue.type === 'Subtask'"
+                  [className]="'btn-empty'"
+                  (click)="convertSubtaskToIssue()">
+            Convert to Issue
+        </j-button>
         <j-button *ngIf="canEdit$ | async"
                   icon="trash"
                   [className]="'btn-empty'"
@@ -37,6 +47,13 @@
 
             <div class="pt-4 pb-2 text-15 font-medium">Comments</div>
             <issue-comments [issue]="issue" [canEdit]="canEdit$ | async"></issue-comments>
+
+            <issue-subtasks [issue]="issue"
+                           [canEdit]="canEdit$ | async"
+                           (onAddSubtask)="addSubtask()"
+                           (onConvertToSubtask)="convertExistingIssueToSubtask()"
+                           (onOpenSubtask)="openSubtask($event)">
+            </issue-subtasks>
         </div>
         <div class="sm:w-full md:w-5/12 lg:w-2/6 pt-1">
             <issue-status [issue]="issue" [canEdit]="canEdit$ | async"></issue-status>

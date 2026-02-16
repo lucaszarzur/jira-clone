@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { JIssue } from '@trungk18/interface/issue';
 import { ProjectService } from '@trungk18/project/state/project/project.service';
+import { ProjectQuery } from '@trungk18/project/state/project/project.query';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
 import { DeleteIssueModel } from '@trungk18/interface/ui-model/delete-issue-model';
@@ -17,7 +18,8 @@ export class IssueModalComponent {
   constructor(
     private _modal: NzModalRef,
     private _router: Router,
-    private _projectService: ProjectService
+    private _projectService: ProjectService,
+    private _projectQuery: ProjectQuery
   ) {}
 
   closeModal() {
@@ -25,8 +27,8 @@ export class IssueModalComponent {
   }
 
   openIssuePage(issueId: string) {
-    this.closeModal();
-    this._router.navigate(['project', 'issue', issueId]);
+    // Substituir o conteúdo da modal pela nova issue
+    this.issue$ = this._projectQuery.issueById$(issueId);
   }
 
   deleteIssue({ issueId, deleteModalRef }: DeleteIssueModel) {

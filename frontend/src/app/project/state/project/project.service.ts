@@ -221,6 +221,52 @@ export class ProjectService {
       .subscribe();
   }
 
+  convertToSubtask(issueId: string, parentIssueId: string) {
+    this.http
+      .put<JIssue>(`${this.baseUrl}/issues/${issueId}/convert-to-subtask`, { parentIssueId })
+      .pipe(
+        tap((updatedIssue) => {
+          this.store.update((state) => {
+            const issues = arrayUpsert(state.issues, updatedIssue.id, updatedIssue);
+            return {
+              ...state,
+              issues
+            };
+          });
+          this._notificationService.success('Sucesso', 'Issue convertida para subtask com sucesso!');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.store.setError(error);
+          this._notificationService.handleHttpError(error);
+          return of(error);
+        })
+      )
+      .subscribe();
+  }
+
+  convertToIssue(issueId: string) {
+    this.http
+      .put<JIssue>(`${this.baseUrl}/issues/${issueId}/convert-to-issue`, {})
+      .pipe(
+        tap((updatedIssue) => {
+          this.store.update((state) => {
+            const issues = arrayUpsert(state.issues, updatedIssue.id, updatedIssue);
+            return {
+              ...state,
+              issues
+            };
+          });
+          this._notificationService.success('Sucesso', 'Subtask convertida para issue com sucesso!');
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.store.setError(error);
+          this._notificationService.handleHttpError(error);
+          return of(error);
+        })
+      )
+      .subscribe();
+  }
+
   updateIssueComment(issueId: string, comment: JComment) {
     if (comment.id) {
       // Atualizar comentário existente

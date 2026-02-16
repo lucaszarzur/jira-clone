@@ -25,9 +25,15 @@ export class AddIssueModalComponent implements OnInit {
   assignees$: Observable<JUser[]>;
   issueForm: FormGroup;
   editorOptions = quillConfiguration;
+  parentIssueId?: string; // Can be set from modal params
+  parentIssue?: JIssue; // Parent issue data if creating subtask
 
   get f() {
     return this.issueForm?.controls;
+  }
+
+  get isSubtask(): boolean {
+    return !!this.parentIssueId;
   }
 
   constructor(
@@ -46,6 +52,19 @@ export class AddIssueModalComponent implements OnInit {
       this.f.reporterId.patchValue(currentUser.id);
     }
 
+    // If creating subtask, load parent issue data and set type to SUBTASK
+    if (this.parentIssueId) {
+      this.f.type.patchValue(IssueType.SUBTASK);
+      this.f.type.disable(); // Disable type selection for subtasks
+
+      // Load parent issue data
+      this._projectQuery.issueById$(this.parentIssueId)
+        .pipe(take(1))
+        .subscribe(issue => {
+          this.parentIssue = issue;
+        });
+    }
+
     this.reporterUsers$ = this._projectQuery.users$;
     this.assignees$ = this._projectQuery.users$;
   }
@@ -57,7 +76,8 @@ export class AddIssueModalComponent implements OnInit {
       title: ['', NoWhitespaceValidator()],
       description: [''],
       reporterId: [''],
-      userIds: [[]]
+      userIds: [[]],
+      parentIssueId: [null]
     });
   }
 
@@ -75,13 +95,16 @@ export class AddIssueModalComponent implements OnInit {
         return;
       }
 
+      const formValue = this.issueForm.getRawValue(); // Use getRawValue to include disabled fields
+
       const issue: JIssue = {
-        ...this.issueForm.getRawValue(),
+        ...formValue,
         id: IssueUtil.getRandomId(),
         status: IssueStatus.BACKLOG,
         createdAt: now,
         updatedAt: now,
-        projectId: project.id
+        projectId: project.id,
+        parentIssueId: this.parentIssueId || formValue.parentIssueId
       };
 
       // Criar uma nova issue usando o método HTTP POST

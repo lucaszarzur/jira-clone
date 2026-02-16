@@ -18,7 +18,8 @@ export class ProjectConst {
   static IssueTypesWithIcon: IssueTypeWithIcon[] = [
     new IssueTypeWithIcon(IssueType.BUG),
     new IssueTypeWithIcon(IssueType.STORY),
-    new IssueTypeWithIcon(IssueType.TASK)
+    new IssueTypeWithIcon(IssueType.TASK),
+    new IssueTypeWithIcon(IssueType.SUBTASK)
   ];
   /* eslint-enable @typescript-eslint/naming-convention */
 }

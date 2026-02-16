@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum IssueType {
     STORY("Story"),
     TASK("Task"),
-    BUG("Bug");
+    BUG("Bug"),
+    SUBTASK("Subtask");
 
     private final String value;
 

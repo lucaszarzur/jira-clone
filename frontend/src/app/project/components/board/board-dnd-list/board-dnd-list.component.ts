@@ -76,6 +76,9 @@ export class BoardDndListComponent implements OnInit {
   filterIssues(issues: JIssue[], filter: FilterState): JIssue[] {
     const { onlyMyIssue, ignoreResolved, searchTerm, userIds } = filter;
     return issues.filter((issue) => {
+      // Don't show subtasks as separate cards - they will be shown nested under parent
+      const isNotSubtask = issue.type !== 'Subtask';
+
       const isMatchTerm = searchTerm ? IssueUtil.searchString(issue.title, searchTerm) : true;
 
       const isIncludeUsers = userIds?.length
@@ -88,7 +91,7 @@ export class BoardDndListComponent implements OnInit {
 
       const isIgnoreResolved = ignoreResolved ? issue.status !== IssueStatus.DONE : true;
 
-      return isMatchTerm && isIncludeUsers && isMyIssue && isIgnoreResolved;
+      return isNotSubtask && isMatchTerm && isIncludeUsers && isMyIssue && isIgnoreResolved;
     });
   }
 

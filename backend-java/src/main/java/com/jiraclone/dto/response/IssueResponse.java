@@ -32,6 +32,7 @@ public class IssueResponse {
     private Integer timeRemaining;
     private String reporterId;
     private String projectId;
+    private String parentIssueId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -39,6 +40,32 @@ public class IssueResponse {
     private List<UserResponse> assignees;
     private Set<String> userIds; // For compatibility with frontend
     private List<CommentResponse> comments;
+
+    // Subtask relationships
+    private IssueResponse parentIssue;
+    private List<SubtaskSummary> subtasks;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SubtaskSummary {
+        private String id;
+        private String title;
+        private IssueType type;
+        private IssueStatus status;
+        private IssuePriority priority;
+
+        public static SubtaskSummary from(Issue issue) {
+            return SubtaskSummary.builder()
+                .id(issue.getId())
+                .title(issue.getTitle())
+                .type(issue.getType())
+                .status(issue.getStatus())
+                .priority(issue.getPriority())
+                .build();
+        }
+    }
 
     public static IssueResponse from(Issue issue) {
         return IssueResponse.builder()
@@ -54,6 +81,7 @@ public class IssueResponse {
             .timeRemaining(issue.getTimeRemaining())
             .reporterId(issue.getReporterId())
             .projectId(issue.getProjectId())
+            .parentIssueId(issue.getParentIssueId())
             .createdAt(issue.getCreatedAt())
             .updatedAt(issue.getUpdatedAt())
             .reporter(issue.getReporter() != null ?
@@ -67,6 +95,23 @@ public class IssueResponse {
             .comments(issue.getComments().stream()
                 .map(CommentResponse::from)
                 .collect(Collectors.toList()))
+            .parentIssue(issue.getParentIssue() != null ?
+                fromParent(issue.getParentIssue()) : null)
+            .subtasks(issue.getSubtasks().stream()
+                .map(SubtaskSummary::from)
+                .collect(Collectors.toList()))
+            .build();
+    }
+
+    // Helper method to avoid infinite recursion when loading parent
+    private static IssueResponse fromParent(Issue issue) {
+        return IssueResponse.builder()
+            .id(issue.getId())
+            .title(issue.getTitle())
+            .type(issue.getType())
+            .status(issue.getStatus())
+            .priority(issue.getPriority())
+            .projectId(issue.getProjectId())
             .build();
     }
 }

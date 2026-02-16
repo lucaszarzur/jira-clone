@@ -35,6 +35,7 @@ import { NavigationComponents } from './components/navigation';
 import { ResizerComponent } from './components/navigation/resizer/resizer.component';
 import { IssueResultComponent } from './components/search/issue-result/issue-result.component';
 import { SearchDrawerComponent } from './components/search/search-drawer/search-drawer.component';
+import { SelectParentIssueModalComponent } from './components/select-parent-issue-modal/select-parent-issue-modal.component';
 import { UserComponent } from './components/user/user.component';
 // Removed project settings components temporarily
 import { NZ_TASKFLOW_ICONS } from './config/icons';
@@ -57,6 +58,7 @@ import { ProjectComponent } from './project.component';
     SearchDrawerComponent,
     IssueResultComponent,
     AddIssueModalComponent,
+    SelectParentIssueModalComponent,
     UserComponent,
     IssueTypeSelectComponent,
     IssuePrioritySelectComponent,

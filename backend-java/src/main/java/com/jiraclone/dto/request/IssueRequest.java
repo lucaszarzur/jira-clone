@@ -39,5 +39,7 @@ public class IssueRequest {
     @NotBlank(message = "Project ID é obrigatório")
     private String projectId;
 
+    private String parentIssueId; // For subtasks
+
     private Set<String> userIds; // Assignees
 }

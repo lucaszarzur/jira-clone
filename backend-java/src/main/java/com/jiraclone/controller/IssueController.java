@@ -1,5 +1,6 @@
 package com.jiraclone.controller;
 
+import com.jiraclone.dto.request.ConvertToSubtaskRequest;
 import com.jiraclone.dto.request.IssueRequest;
 import com.jiraclone.dto.response.IssueResponse;
 import com.jiraclone.security.UserPrincipal;
@@ -83,5 +84,24 @@ public class IssueController {
             @AuthenticationPrincipal UserPrincipal currentUser) {
         issueService.deleteIssue(id, currentUser);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Convert an existing issue to a subtask")
+    @PutMapping("/{id}/convert-to-subtask")
+    public ResponseEntity<IssueResponse> convertToSubtask(
+            @PathVariable String id,
+            @Valid @RequestBody ConvertToSubtaskRequest request,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
+        IssueResponse issue = issueService.convertToSubtask(id, request, currentUser);
+        return ResponseEntity.ok(issue);
+    }
+
+    @Operation(summary = "Convert a subtask back to a regular issue")
+    @PutMapping("/{id}/convert-to-issue")
+    public ResponseEntity<IssueResponse> convertToIssue(
+            @PathVariable String id,
+            @AuthenticationPrincipal UserPrincipal currentUser) {
+        IssueResponse issue = issueService.convertToIssue(id, currentUser);
+        return ResponseEntity.ok(issue);
     }
 }
