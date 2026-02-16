@@ -16,6 +16,15 @@ export class ProjectQuery extends Query<ProjectState> {
   users$ = this.select(state => state.users);
   projects$ = this.select(state => state.projects);
   project$ = this.select(state => state.project);
+  userRole$ = this.select(state => state.userRole);
+  canEdit$ = this.userRole$.pipe(
+    map(role => role === 'ADMIN' || role === 'MEMBER' || role === 'admin' || role === 'member')
+  );
+
+  get canEdit(): boolean {
+    const role = this.store.getValue().userRole;
+    return role === 'ADMIN' || role === 'MEMBER' || role === 'admin' || role === 'member';
+  }
 
   // Select all projects
   selectAll() {

@@ -13,6 +13,7 @@ import { ProjectService } from '@trungk18/project/state/project/project.service'
 export class IssueAssigneesComponent implements OnInit, OnChanges {
   @Input() issue: JIssue;
   @Input() users: JUser[];
+  @Input() canEdit: boolean = true;
   assignees: JUser[];
 
   constructor(private _projectService: ProjectService) {}

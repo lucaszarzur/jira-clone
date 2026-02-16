@@ -9,6 +9,7 @@ export interface ProjectState {
   projects: JProject[];
   issues: JIssue[];
   users: JUser[];
+  userRole: string | null;
   loading: boolean;
   error: any;
 }
@@ -18,6 +19,7 @@ const initialState: ProjectState = {
   projects: [],
   issues: [],
   users: [],
+  userRole: null,
   loading: false,
   error: null
 };

@@ -46,6 +46,8 @@ public class SecurityConfig {
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Swagger / OpenAPI endpoints
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 // Public endpoints
                 .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                 // Semi-public endpoints (users GET endpoints)
@@ -54,7 +56,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/projects", "/api/projects/*").permitAll()
                 // Semi-public endpoints (issues and comments GET endpoints)
                 .requestMatchers(HttpMethod.GET, "/api/issues", "/api/issues/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/comments", "/api/comments/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/comments", "/api/comments/*", "/api/comments/issue/*").permitAll()
                 // All other endpoints require authentication
                 .anyRequest().authenticated()
             );

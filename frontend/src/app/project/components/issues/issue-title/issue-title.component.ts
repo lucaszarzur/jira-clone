@@ -10,6 +10,7 @@ import { ProjectService } from '@trungk18/project/state/project/project.service'
 })
 export class IssueTitleComponent implements OnChanges {
   @Input() issue: JIssue;
+  @Input() canEdit: boolean = true;
   titleControl: FormControl;
 
   constructor(private _projectService: ProjectService) {}

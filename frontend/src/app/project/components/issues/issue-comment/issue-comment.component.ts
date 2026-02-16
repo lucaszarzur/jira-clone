@@ -20,6 +20,7 @@ export class IssueCommentComponent implements OnInit {
   @Input() issueId: string;
   @Input() comment: JComment;
   @Input() createMode: boolean;
+  @Input() canEdit: boolean = true;
   @ViewChild('commentBoxRef') commentBoxRef: ElementRef;
   commentControl: FormControl;
   user: JUser;

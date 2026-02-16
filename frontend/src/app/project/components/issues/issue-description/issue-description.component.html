@@ -1,4 +1,4 @@
-<ng-container *ngIf="isEditing; else readonlyModeTmpl">
+<ng-container *ngIf="isEditing && canEdit; else readonlyModeTmpl">
     <quill-editor class="content-editor"
                   [modules]="editorOptions"
                   [formControl]="descriptionControl"
@@ -23,10 +23,10 @@
 <ng-template #readonlyModeTmpl>
     <div class="ql-snow content-readonly"
          *ngIf="!isEditing"
-         (click)="setEditMode(true)">
+         (click)="canEdit && setEditMode(true)">
         <div class="ql-editor"
              [innerHTML]="processedDescription || 'Click to add description'"></div>
-        <div class="icon-edit">
+        <div class="icon-edit" *ngIf="canEdit">
             <i nz-icon
                class="cursor-pointer"
                title="Click to edit"

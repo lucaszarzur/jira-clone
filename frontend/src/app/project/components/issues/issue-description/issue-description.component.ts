@@ -14,6 +14,7 @@ import { SafeHtml } from '@angular/platform-browser';
 })
 export class IssueDescriptionComponent implements OnChanges {
   @Input() issue: JIssue;
+  @Input() canEdit: boolean = true;
   descriptionControl: FormControl;
   editorOptions = quillConfiguration;
   isEditing: boolean;

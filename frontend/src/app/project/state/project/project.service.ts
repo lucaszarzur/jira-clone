@@ -62,15 +62,17 @@ export class ProjectService {
       .get<JProject>(`${this.baseUrl}/projects/${projectId}`)
       .pipe(
         setLoading(this.store),
-        tap((project) => {
+        tap((project: any) => {
           this.store.update((state) => {
             const issues = project?.issues ?? state.issues;
             const users = project?.users ?? state.users;
+            const userRole = project?.userRole ?? state.userRole;
             return {
               ...state,
               project,
               issues,
-              users
+              users,
+              userRole
             };
           });
         }),
@@ -95,8 +97,8 @@ export class ProjectService {
             return;
           }
 
-          // Atualizar a issue com os comentários
-          this.updateIssue({
+          // Atualizar a issue com os comentários (apenas no store local)
+          this.updateIssueLocally({
             ...issue,
             comments: comments
           });
@@ -188,6 +190,14 @@ export class ProjectService {
       .subscribe();
   }
 
+  /** Update issue only in the local Akita store (no API call) */
+  private updateIssueLocally(issue: JIssue) {
+    this.store.update((state) => {
+      const issues = arrayUpsert(state.issues, issue.id, issue);
+      return { ...state, issues };
+    });
+  }
+
   deleteIssue(issueId: string) {
     this.http
       .delete(`${this.baseUrl}/issues/${issueId}`)
@@ -225,7 +235,7 @@ export class ProjectService {
             }
 
             const comments = arrayUpsert(issue.comments ?? [], updatedComment.id, updatedComment);
-            this.updateIssue({
+            this.updateIssueLocally({
               ...issue,
               comments
             });
@@ -253,7 +263,7 @@ export class ProjectService {
                     }
 
                     const comments = arrayUpsert(issue.comments ?? [], newComment.id, newComment);
-                    this.updateIssue({
+                    this.updateIssueLocally({
                       ...issue,
                       comments
                     });
@@ -295,7 +305,7 @@ export class ProjectService {
             }
 
             const comments = arrayUpsert(issue.comments ?? [], newComment.id, newComment);
-            this.updateIssue({
+            this.updateIssueLocally({
               ...issue,
               comments
             });
@@ -316,16 +326,18 @@ export class ProjectService {
     console.log('Getting project by ID:', id, 'from:', `${this.baseUrl}/projects/${id}`);
     this.setLoading(true);
     return this.http.get<JProject>(`${this.baseUrl}/projects/${id}`).pipe(
-      tap(project => {
+      tap((project: any) => {
         console.log('Project received:', project);
         this.store.update(state => {
           const issues = project?.issues ?? state.issues;
           const users = project?.users ?? state.users;
+          const userRole = project?.userRole ?? state.userRole;
           return {
             ...state,
             project,
             issues,
             users,
+            userRole,
             loading: false,
             error: null
           };

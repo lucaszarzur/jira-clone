@@ -1,5 +1,6 @@
 <issue-comment [createMode]="true"
-               [issueId]="issue?.id">
+               [issueId]="issue?.id"
+               [canEdit]="canEdit">
 </issue-comment>
 
 <div *ngIf="isLoading" class="flex justify-center py-4">
@@ -13,5 +14,6 @@
 </div>
 
 <issue-comment *ngFor="let comment of issue?.comments"
-               [comment]="comment">
+               [comment]="comment"
+               [canEdit]="canEdit">
 </issue-comment>

@@ -1,13 +1,21 @@
 package com.jiraclone.service;
 
 import com.jiraclone.domain.entity.Issue;
+import com.jiraclone.domain.entity.Permission;
 import com.jiraclone.domain.entity.User;
+import com.jiraclone.domain.enums.ProjectRole;
+import com.jiraclone.domain.enums.UserRole;
 import com.jiraclone.domain.repository.IssueRepository;
+import com.jiraclone.domain.repository.PermissionRepository;
 import com.jiraclone.domain.repository.UserRepository;
 import com.jiraclone.dto.request.IssueRequest;
 import com.jiraclone.dto.response.IssueResponse;
+import com.jiraclone.exception.ForbiddenException;
 import com.jiraclone.exception.ResourceNotFoundException;
+import com.jiraclone.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +30,7 @@ public class IssueService {
 
     private final IssueRepository issueRepository;
     private final UserRepository userRepository;
+    private final PermissionRepository permissionRepository;
 
     @Transactional(readOnly = true)
     public List<IssueResponse> getAllIssues() {
@@ -31,14 +40,29 @@ public class IssueService {
     }
 
     @Transactional(readOnly = true)
+    public Page<IssueResponse> getAllIssues(Pageable pageable) {
+        return issueRepository.findAll(pageable)
+            .map(IssueResponse::from);
+    }
+
+    @Transactional(readOnly = true)
     public IssueResponse getIssueById(String id) {
         Issue issue = issueRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Issue", "id", id));
         return IssueResponse.from(issue);
     }
 
+    @Transactional(readOnly = true)
+    public List<IssueResponse> searchIssues(String term, String projectId) {
+        return issueRepository.searchByTermAndProjectId(term, projectId).stream()
+            .map(IssueResponse::from)
+            .collect(Collectors.toList());
+    }
+
     @Transactional
-    public IssueResponse createIssue(IssueRequest request) {
+    public IssueResponse createIssue(IssueRequest request, UserPrincipal currentUser) {
+        checkProjectPermission(request.getProjectId(), currentUser, ProjectRole.MEMBER);
+
         // Verify reporter exists
         userRepository.findById(request.getReporterId())
             .orElseThrow(() -> new ResourceNotFoundException("User", "id", request.getReporterId()));
@@ -75,9 +99,11 @@ public class IssueService {
     }
 
     @Transactional
-    public IssueResponse updateIssue(String id, IssueRequest request) {
+    public IssueResponse updateIssue(String id, IssueRequest request, UserPrincipal currentUser) {
         Issue issue = issueRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Issue", "id", id));
+
+        checkProjectPermission(issue.getProjectId(), currentUser, ProjectRole.MEMBER);
 
         issue.setTitle(request.getTitle());
         issue.setType(request.getType());
@@ -114,10 +140,29 @@ public class IssueService {
     }
 
     @Transactional
-    public void deleteIssue(String id) {
+    public void deleteIssue(String id, UserPrincipal currentUser) {
         Issue issue = issueRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Issue", "id", id));
 
+        checkProjectPermission(issue.getProjectId(), currentUser, ProjectRole.ADMIN);
+
         issueRepository.delete(issue);
+    }
+
+    private void checkProjectPermission(String projectId, UserPrincipal currentUser,
+                                         ProjectRole requiredRole) {
+        if (currentUser.getRole() == UserRole.ADMIN) {
+            return; // System admin can do anything
+        }
+
+        Permission permission = permissionRepository
+            .findByUserIdAndProjectId(currentUser.getId(), projectId)
+            .orElseThrow(() -> new ForbiddenException(
+                "You do not have permission to access this project"));
+
+        if (!permission.getRole().hasPermission(requiredRole)) {
+            throw new ForbiddenException(
+                "Access denied. Requires " + requiredRole.getValue() + " role or higher.");
+        }
     }
 }

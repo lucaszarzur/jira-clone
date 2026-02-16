@@ -12,6 +12,7 @@ import { ProjectConst } from '@trungk18/project/config/const';
 })
 export class IssuePriorityComponent implements OnInit, OnChanges {
   @Input() issue: JIssue;
+  @Input() canEdit: boolean = true;
 
   selectedPriority: IssuePriority;
   get selectedPriorityIcon() {

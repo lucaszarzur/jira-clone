@@ -6,7 +6,8 @@
           [className]="'btn-secondary mr-1-5 mb-2'">
     <div class="flex items-center">
         <j-user [user]="assignee"></j-user>
-        <svg-icon (click)="removeUser(assignee.id)"
+        <svg-icon *ngIf="canEdit"
+                  (click)="removeUser(assignee.id)"
                   title="Remove user"
                   [size]="20"
                   [name]="'times'"
@@ -15,7 +16,8 @@
     </div>
 </j-button>
 
-<a class="add-more"
+<a *ngIf="canEdit"
+   class="add-more"
    nz-dropdown
    [nzTrigger]="'click'"
    [nzDropdownMenu]="menu">

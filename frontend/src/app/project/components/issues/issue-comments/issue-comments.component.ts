@@ -9,19 +9,22 @@ import { ProjectService } from '@trungk18/project/state/project/project.service'
 })
 export class IssueCommentsComponent implements OnInit, OnChanges {
   @Input() issue: JIssue;
+  @Input() canEdit: boolean = true;
   isLoading = false;
+  private commentsLoadedForIssueId: string | null = null;
 
   constructor(private projectService: ProjectService) {}
 
   ngOnInit(): void {
-    if (this.issue?.id) {
+    if (this.issue?.id && this.commentsLoadedForIssueId !== this.issue.id) {
       this.loadComments();
     }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     // Carregar comentários quando a issue mudar
-    if (changes.issue && changes.issue.currentValue?.id !== changes.issue.previousValue?.id) {
+    if (changes.issue && changes.issue.currentValue?.id !== changes.issue.previousValue?.id
+        && this.commentsLoadedForIssueId !== changes.issue.currentValue?.id) {
       this.loadComments();
     }
   }
@@ -32,6 +35,7 @@ export class IssueCommentsComponent implements OnInit, OnChanges {
     }
 
     this.isLoading = true;
+    this.commentsLoadedForIssueId = this.issue.id;
     this.projectService.getIssueComments(this.issue.id)
       .subscribe({
         next: () => {

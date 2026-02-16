@@ -12,6 +12,7 @@ import { ProjectConst } from '@trungk18/project/config/const';
 })
 export class IssueTypeComponent implements OnInit, OnChanges {
   @Input() issue: JIssue;
+  @Input() canEdit: boolean = true;
 
   get selectedIssueTypeIcon(): string {
     return IssueUtil.getIssueTypeIcon(this.issue.type);

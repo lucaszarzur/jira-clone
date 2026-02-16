@@ -4,6 +4,8 @@ import com.jiraclone.dto.request.RegisterRequest;
 import com.jiraclone.dto.response.UserResponse;
 import com.jiraclone.security.UserPrincipal;
 import com.jiraclone.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Tag(name = "Users", description = "User management operations")
 public class UserController {
 
     private final UserService userService;

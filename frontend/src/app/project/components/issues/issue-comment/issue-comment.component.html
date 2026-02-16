@@ -13,7 +13,7 @@
             {{ comment.updatedAt | date:"medium" }}
         </div>
         <div class="editing-area"
-             *ngIf="createMode">
+             *ngIf="createMode && canEdit">
             <div *ngIf="!isEditing"
                  class="textarea-inline-control textarea-border"
                  (click)="setCommentEdit(true)">
@@ -45,7 +45,7 @@
         <div *ngIf="!createMode">
             <div *ngIf="!isEditing" class="comment-content">
                 <div [innerHTML]="processedBody"></div>
-                <div class="comment-actions mt-2">
+                <div *ngIf="canEdit" class="comment-actions mt-2">
                     <button class="text-textMedium hover:text-textDark text-sm mr-2"
                             (click)="setCommentEdit(true)">
                         Edit

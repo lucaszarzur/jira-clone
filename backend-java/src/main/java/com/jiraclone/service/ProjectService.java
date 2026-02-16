@@ -15,6 +15,8 @@ import com.jiraclone.exception.ForbiddenException;
 import com.jiraclone.exception.ResourceNotFoundException;
 import com.jiraclone.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,16 @@ public class ProjectService {
         return projects.stream()
             .map(ProjectResponse::from)
             .collect(Collectors.toList());
+    }
+
+    public Page<ProjectResponse> getAllProjects(UserPrincipal currentUser, Pageable pageable) {
+        if (currentUser == null) {
+            return projectRepository.findByIsPublicTrue(pageable)
+                .map(ProjectResponse::from);
+        } else {
+            return projectRepository.findAllAccessibleByUser(currentUser.getId(), pageable)
+                .map(ProjectResponse::from);
+        }
     }
 
     @Transactional(readOnly = true)

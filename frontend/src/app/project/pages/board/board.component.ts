@@ -11,7 +11,7 @@ import { ProjectQuery } from '@trungk18/project/state/project/project.query';
 export class BoardComponent implements OnInit, OnDestroy {
   breadcrumbs: string[] = ['Projects', 'Angular Jira Clone', 'Kanban Board'];
   private refreshInterval: any;
-  private refreshIntervalTime = 5000; // 5 segundos
+  private refreshIntervalTime = 60000; // 60 segundos
 
   constructor(
     private _googleAnalytics: GoogleAnalyticsService,

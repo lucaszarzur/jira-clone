@@ -5,6 +5,8 @@ import com.jiraclone.dto.request.PermissionRequest;
 import com.jiraclone.dto.response.PermissionResponse;
 import com.jiraclone.security.UserPrincipal;
 import com.jiraclone.service.PermissionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/permissions")
 @RequiredArgsConstructor
+@Tag(name = "Permissions", description = "Project permission management")
 public class PermissionController {
 
     private final PermissionService permissionService;

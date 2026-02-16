@@ -3,6 +3,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import { IssueStatus, IssueStatusDisplay, JIssue } from '@trungk18/interface/issue';
 import { FilterState } from '@trungk18/project/state/filter/filter.store';
 import { ProjectService } from '@trungk18/project/state/project/project.service';
+import { ProjectQuery } from '@trungk18/project/state/project/project.query';
 import { Observable, combineLatest } from 'rxjs';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { FilterQuery } from '@trungk18/project/state/filter/filter.query';
@@ -24,18 +25,29 @@ export class BoardDndListComponent implements OnInit {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   IssueStatusDisplay = IssueStatusDisplay;
   issues: JIssue[] = [];
+  canEdit: boolean = true;
 
   get issuesCount(): number {
     return this.issues.length;
   }
 
-  constructor(private _projectService: ProjectService, private _filterQuery: FilterQuery) {}
+  constructor(
+    private _projectService: ProjectService,
+    private _filterQuery: FilterQuery,
+    private _projectQuery: ProjectQuery
+  ) {}
 
   ngOnInit(): void {
     combineLatest([this.issues$, this._filterQuery.all$])
       .pipe(untilDestroyed(this))
       .subscribe(([issues, filter]) => {
         this.issues = this.filterIssues(issues, filter);
+      });
+
+    this._projectQuery.canEdit$
+      .pipe(untilDestroyed(this))
+      .subscribe(canEdit => {
+        this.canEdit = canEdit;
       });
   }
 
@@ -54,9 +66,10 @@ export class BoardDndListComponent implements OnInit {
         event.previousIndex,
         event.currentIndex
       );
+      // Atualizar o status do item movido ANTES de enviar os PUTs
+      const newStatus = event.container.id as IssueStatus;
+      newIssues[event.currentIndex] = { ...newIssues[event.currentIndex], status: newStatus };
       this.updateListPosition(newIssues, false);
-      newIssue.status = event.container.id as IssueStatus;
-      this._projectService.updateIssue(newIssue, true); // Mostrar notificação apenas para mudança de status
     }
   }
 
