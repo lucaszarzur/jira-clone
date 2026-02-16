@@ -38,15 +38,12 @@
                   [className]="'btn-empty'">
         </j-button>
     </div>
-    <div class="flex w-full flex-wrap pb-16">
-        <div class="sm:w-full md:w-7/12 lg:w-4/6 pr-10">
+    <div class="flex w-full pb-16">
+        <div class="flex-1 min-w-0 pr-10">
             <issue-title [issue]="issue" [canEdit]="canEdit$ | async"></issue-title>
 
             <div class="pt-4 pb-2 text-15 font-medium">Description</div>
             <issue-description [issue]="issue" [canEdit]="canEdit$ | async"></issue-description>
-
-            <div class="pt-4 pb-2 text-15 font-medium">Comments</div>
-            <issue-comments [issue]="issue" [canEdit]="canEdit$ | async"></issue-comments>
 
             <issue-subtasks [issue]="issue"
                            [canEdit]="canEdit$ | async"
@@ -54,8 +51,11 @@
                            (onConvertToSubtask)="convertExistingIssueToSubtask()"
                            (onOpenSubtask)="openSubtask($event)">
             </issue-subtasks>
+
+            <div class="pt-4 pb-2 text-15 font-medium">Comments</div>
+            <issue-comments [issue]="issue" [canEdit]="canEdit$ | async"></issue-comments>
         </div>
-        <div class="sm:w-full md:w-5/12 lg:w-2/6 pt-1">
+        <div class="flex-shrink-0 w-80 pt-1">
             <issue-status [issue]="issue" [canEdit]="canEdit$ | async"></issue-status>
             <issue-reporter [issue]="issue"
                             [users]="projectQuery.users$ | async"
