@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IssueType, JIssue, IssueStatus, IssuePriority } from '@trungk18/interface/issue';
 import { quillConfiguration } from '@trungk18/project/config/editor';
 import { NzModalRef } from 'ng-zorro-antd/modal';
@@ -9,7 +9,7 @@ import { ProjectQuery } from '@trungk18/project/state/project/project.query';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { JUser } from '@trungk18/interface/user';
-import { tap, take } from 'rxjs/operators';
+import { tap, take, map } from 'rxjs/operators';
 import { NoWhitespaceValidator } from '@trungk18/core/validators/no-whitespace.validator';
 import { DateUtil } from '@trungk18/project/utils/date';
 import { AuthService } from '@trungk18/core/services/auth.service';
@@ -23,6 +23,7 @@ import { AuthService } from '@trungk18/core/services/auth.service';
 export class AddIssueModalComponent implements OnInit {
   reporterUsers$: Observable<JUser[]>;
   assignees$: Observable<JUser[]>;
+  availableParentIssues$: Observable<JIssue[]>;
   issueForm: FormGroup;
   editorOptions = quillConfiguration;
   parentIssueId?: string; // Can be set from modal params
@@ -67,6 +68,27 @@ export class AddIssueModalComponent implements OnInit {
 
     this.reporterUsers$ = this._projectQuery.users$;
     this.assignees$ = this._projectQuery.users$;
+
+    // Load available parent issues (only non-subtask issues)
+    this.availableParentIssues$ = this._projectQuery.issues$.pipe(
+      map(issues => issues.filter(issue => issue.type !== IssueType.SUBTASK))
+    );
+
+    // Watch type changes to enable/disable parent selection
+    this.f.type.valueChanges.pipe(untilDestroyed(this)).subscribe(type => {
+      if (type === IssueType.SUBTASK && !this.parentIssueId) {
+        // Enable parent selection for subtasks created from global button
+        this.f.parentIssueId.setValidators([Validators.required]);
+        this.f.parentIssueId.enable();
+        this.f.parentIssueId.updateValueAndValidity();
+      } else if (type !== IssueType.SUBTASK) {
+        // Disable and clear parent selection for non-subtasks
+        this.f.parentIssueId.clearValidators();
+        this.f.parentIssueId.patchValue(null);
+        this.f.parentIssueId.disable();
+        this.f.parentIssueId.updateValueAndValidity();
+      }
+    });
   }
 
   initForm() {

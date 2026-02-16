@@ -25,6 +25,24 @@
             </label>
             <issue-type-select [control]="f?.type"></issue-type-select>
         </div>
+        <div class="mt-3 form-group" *ngIf="f?.type?.value === 'Subtask' && !parentIssueId">
+            <label class="label">
+                Parent issue <span class="text-red-500">*</span>
+            </label>
+            <nz-select class="w-full"
+                       formControlName="parentIssueId"
+                       nzShowSearch
+                       nzPlaceHolder="Select a parent issue">
+                <nz-option *ngFor="let issue of availableParentIssues$ | async"
+                           [nzValue]="issue.id"
+                           [nzLabel]="issue.title">
+                    <div class="flex items-center">
+                        <svg-icon [name]="issue.type.toLowerCase()" [size]="16" class="mr-2"></svg-icon>
+                        <span class="text-13">{{ issue.type }}-{{ issue.id }}: {{ issue.title }}</span>
+                    </div>
+                </nz-option>
+            </nz-select>
+        </div>
         <div class="mt-3 form-group">
             <label class="label">
                 Issue priority
