@@ -66,32 +66,39 @@ cd jira-clone
 
 ### 2. Configurar o Nginx na Máquina Host
 
-Copie o arquivo de configuração do Nginx para o diretório apropriado:
+O arquivo `jira-clone-nginx-host-config.conf` é um template para o proxy reverso do Nginx na máquina host.
+
+Copie o template e edite com os dados do seu domínio:
 
 ```bash
-sudo cp nginx-host-config.conf /etc/nginx/sites-available/jira-clone
+sudo cp jira-clone-nginx-host-config.conf /etc/nginx/sites-available/seu-dominio.conf
+sudo nano /etc/nginx/sites-available/seu-dominio.conf
 ```
 
-Crie um link simbólico para habilitá-lo:
+No arquivo, substitua:
+- `seu-dominio.com` pelo seu domínio real
+- Os caminhos de log conforme necessário
+
+Habilite o site e recarregue o Nginx:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/jira-clone /etc/nginx/sites-enabled/
-```
-
-Edite o arquivo para substituir `seu-dominio.com` pelo seu domínio real:
-
-```bash
-sudo nano /etc/nginx/sites-available/jira-clone
-```
-
-Verifique a configuração do Nginx e reinicie o serviço:
-
-```bash
+sudo ln -s /etc/nginx/sites-available/seu-dominio.conf /etc/nginx/sites-enabled/
 sudo nginx -t
-sudo systemctl restart nginx
+sudo systemctl reload nginx
 ```
 
-### 3. Iniciar os Contêineres Docker
+### 3. Configurar SSL com Certbot (Recomendado)
+
+Para habilitar HTTPS com certificado gratuito do Let's Encrypt:
+
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d seu-dominio.com
+```
+
+O Certbot modifica automaticamente a configuração do Nginx para incluir o certificado SSL e o redirect HTTP → HTTPS.
+
+### 4. Iniciar os Contêineres Docker
 
 Para iniciar em modo de produção:
 
@@ -99,7 +106,7 @@ Para iniciar em modo de produção:
 ./build-deploy.sh prod
 ```
 
-### 4. Verificar a Implantação
+### 5. Verificar a Implantação
 
 A aplicação deve estar acessível através do seu domínio. Você pode verificar os logs dos contêineres para solucionar problemas:
 

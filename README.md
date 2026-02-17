@@ -168,7 +168,7 @@ Em produção, recomenda-se usar o Nginx instalado diretamente na máquina host 
 
 Para isso:
 1. Use o Dockerfile.prod para o frontend em produção: `docker-compose -f docker-compose.prod.yml up -d`
-2. Configure o Nginx da máquina host usando o arquivo `nginx-host-config.conf` como modelo
+2. Configure o Nginx da máquina host usando o arquivo `jira-clone-nginx-host-config.conf` como modelo
 
 O frontend possui três Dockerfiles diferentes:
 - `Dockerfile` - Padrão para desenvolvimento local (inclui Nginx)
