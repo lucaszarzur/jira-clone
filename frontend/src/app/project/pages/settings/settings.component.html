@@ -39,6 +39,18 @@
                       formControlName="description">
             </textarea>
         </div>
+        <div class="form-group mt-3">
+            <label class="label">
+                Visibilidade
+            </label>
+            <div class="visibility-toggle">
+                <nz-switch formControlName="isPublic"></nz-switch>
+                <span class="visibility-label">
+                    Projeto Público
+                    <span class="visibility-hint">(Qualquer pessoa pode visualizar)</span>
+                </span>
+            </div>
+        </div>
         <div class="form-actions">
             <button
                 nz-button

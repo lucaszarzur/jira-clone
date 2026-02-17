@@ -36,7 +36,12 @@
           <div class="project-card" *ngFor="let project of projects$ | async" (click)="navigateToProject(project.id)">
             <h3>{{ project.name }}</h3>
             <p>{{ project.description }}</p>
-            <div class="project-category">{{ project.category }}</div>
+            <div class="project-tags">
+              <div class="project-category">{{ project.category }}</div>
+              <div class="project-visibility" [ngClass]="project.isPublic !== false ? 'visibility-public' : 'visibility-private'">
+                {{ project.isPublic !== false ? 'Público' : 'Privado' }}
+              </div>
+            </div>
           </div>
         </ng-container>
         <ng-template #noProjects>

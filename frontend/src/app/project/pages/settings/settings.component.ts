@@ -71,7 +71,8 @@ export class SettingsComponent implements OnInit {
     this.projectForm = this.fb.group({
       name: ['', [Validators.required, NoWhitespaceValidator()]],
       description: [''],
-      category: ['']
+      category: [''],
+      isPublic: [true]
     });
   }
 
@@ -79,7 +80,8 @@ export class SettingsComponent implements OnInit {
     this.projectForm.patchValue({
       name: project.name,
       description: project.description,
-      category: project.category
+      category: project.category,
+      isPublic: project.isPublic ?? true
     });
   }
 

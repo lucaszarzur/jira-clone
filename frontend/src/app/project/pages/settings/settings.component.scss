@@ -1,6 +1,25 @@
 .settings-form {
   max-width: 640px;
 
+  .visibility-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+
+    .visibility-label {
+      font-size: 14px;
+      color: #172b4d;
+      font-weight: 500;
+
+      .visibility-hint {
+        font-weight: 400;
+        color: #5e6c84;
+        font-size: 13px;
+      }
+    }
+  }
+
   .form-actions {
     margin-top: 24px;
 

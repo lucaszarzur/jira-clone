@@ -22,6 +22,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { QuillModule } from 'ngx-quill';
 import { TaskflowControlModule } from '../taskflow-control/taskflow-control.module';
 import { AddIssueModalComponent } from './components/add-issue-modal/add-issue-modal.component';
@@ -87,6 +88,7 @@ import { ProjectComponent } from './project.component';
     NzAvatarModule,
     NzInputModule,
     NzCheckboxModule,
+    NzSwitchModule,
     DragDropModule,
     TextFieldModule,
     FormsModule,

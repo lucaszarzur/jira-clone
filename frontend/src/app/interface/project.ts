@@ -13,6 +13,7 @@ export interface JProject {
   issues: JIssue[];
   users: JUser[];
   userRole?: string;
+  isPublic?: boolean;
 }
 
 // eslint-disable-next-line no-shadow
