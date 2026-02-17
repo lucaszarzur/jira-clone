@@ -21,7 +21,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TestPlanImportService {
+public class ProjectImportService {
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
@@ -32,30 +32,31 @@ public class TestPlanImportService {
     @PersistenceContext
     private jakarta.persistence.EntityManager entityManager;
 
-    private static final String PROJECT_NAME = "MeuNutria - Plano de Testes";
-    private static final String DATA_FILE = "data/meunutria-test-plan.json";
-
     @Transactional
-    public Map<String, Object> importTestPlan(String ownerId) {
-        // Check if project already exists
-        boolean projectExists = projectRepository.findByIsPublicTrue().stream()
-                .anyMatch(p -> PROJECT_NAME.equals(p.getName()));
-        if (projectExists) {
-            throw new IllegalStateException("Project '" + PROJECT_NAME + "' already exists");
-        }
+    public Map<String, Object> importProject(String fileName, String ownerId) {
+        String dataFile = "data/" + fileName + ".json";
 
-        // Load owner within transaction to avoid lazy loading issues
+        // Load owner within transaction
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new IllegalStateException("User not found: " + ownerId));
 
         try {
-            ClassPathResource resource = new ClassPathResource(DATA_FILE);
+            ClassPathResource resource = new ClassPathResource(dataFile);
             if (!resource.exists()) {
-                throw new IllegalStateException("Seed file not found: " + DATA_FILE);
+                throw new IllegalStateException("Seed file not found: " + dataFile);
             }
 
             InputStream inputStream = resource.getInputStream();
             JsonNode rootNode = objectMapper.readTree(inputStream);
+
+            String projectName = rootNode.get("name").asText();
+
+            // Check if project already exists
+            boolean projectExists = projectRepository.findByIsPublicTrue().stream()
+                    .anyMatch(p -> projectName.equals(p.getName()));
+            if (projectExists) {
+                throw new IllegalStateException("Project '" + projectName + "' already exists");
+            }
 
             // Create project
             Project project = createProject(rootNode);
@@ -68,8 +69,8 @@ public class TestPlanImportService {
             // Create issues with subtask support (two-pass)
             int issueCount = createIssuesWithSubtasks(rootNode, project, owner);
 
-            log.info("MeuNutria test plan imported: 1 project, {} issues, owner: {}",
-                    issueCount, owner.getName());
+            log.info("Project imported: '{}', {} issues, owner: {}",
+                    project.getName(), issueCount, owner.getName());
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("projectId", project.getId());
@@ -82,21 +83,16 @@ public class TestPlanImportService {
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error importing MeuNutria test plan", e);
-            throw new RuntimeException("Failed to import test plan: " + e.getMessage(), e);
+            log.error("Error importing project from {}", dataFile, e);
+            throw new RuntimeException("Failed to import project: " + e.getMessage(), e);
         }
     }
 
     @Transactional
-    public Map<String, Object> deleteTestPlan() {
-        Project project = projectRepository.findByIsPublicTrue().stream()
-                .filter(p -> PROJECT_NAME.equals(p.getName()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Project '" + PROJECT_NAME + "' not found"));
+    public Map<String, Object> deleteProject(String projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalStateException("Project not found: " + projectId));
 
-        String projectId = project.getId();
-
-        // Count before deleting
         long issueCount = issueRepository.findByProjectIdOrderByListPositionAsc(projectId).size();
 
         // Delete all via native queries to avoid lazy loading / FK issues
@@ -113,10 +109,11 @@ public class TestPlanImportService {
         entityManager.createNativeQuery("DELETE FROM projects WHERE id = :pid")
                 .setParameter("pid", projectId).executeUpdate();
 
-        log.info("MeuNutria test plan deleted: project {}", projectId);
+        log.info("Project deleted: {} ({})", project.getName(), projectId);
 
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("deletedProjectId", projectId);
+        result.put("deletedProjectName", project.getName());
         result.put("deletedIssues", issueCount);
         return result;
     }

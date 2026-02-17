@@ -248,6 +248,69 @@ Este modo de desenvolvimento oferece:
 #
 
 
+## Importar Projeto via JSON (Admin)
+
+O sistema permite importar projetos completos (com issues e subtasks) a partir de um arquivo JSON. Requer autenticação com role **ADMIN**.
+
+### Formato do JSON
+
+Coloque o arquivo em `backend-java/src/main/resources/data/`. Estrutura esperada:
+
+```json
+{
+  "name": "Nome do Projeto",
+  "url": "https://exemplo.com",
+  "description": "Descrição do projeto",
+  "category": "Software",
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "issues": [
+    {
+      "id": "story-1",
+      "title": "Categoria de Testes",
+      "description": "<p>Descrição</p>",
+      "type": "Story",
+      "status": "Backlog",
+      "priority": "Medium",
+      "listPosition": 1,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "subtask-1",
+      "title": "Caso de teste",
+      "description": "<p>Passos do teste</p>",
+      "type": "Subtask",
+      "status": "Backlog",
+      "priority": "Medium",
+      "listPosition": 1,
+      "parentIssueId": "story-1",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+> Issues do tipo `Story`, `Task` e `Bug` são criadas primeiro. Subtasks com `parentIssueId` são criadas em seguida, referenciando o `id` do parent no JSON.
+
+### Endpoints
+
+```bash
+# Login como admin
+TOKEN=$(curl -s -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"iron.man@taskflow.com","password":"password"}' | jq -r '.token')
+
+# Importar (nome do arquivo sem extensão)
+curl -X POST "http://localhost:3001/api/admin/import-project?file=meu-projeto" \
+  -H "Authorization: Bearer $TOKEN"
+
+# Deletar (pelo projectId retornado no import)
+curl -X DELETE "http://localhost:3001/api/admin/import-project/{projectId}" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
 ## Documentação
 
 ### API

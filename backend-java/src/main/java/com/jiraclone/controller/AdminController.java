@@ -3,7 +3,7 @@ package com.jiraclone.controller;
 import com.jiraclone.domain.enums.UserRole;
 import com.jiraclone.exception.ForbiddenException;
 import com.jiraclone.security.UserPrincipal;
-import com.jiraclone.service.TestPlanImportService;
+import com.jiraclone.service.ProjectImportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,25 +19,27 @@ import java.util.Map;
 @Tag(name = "Admin", description = "Administrative operations")
 public class AdminController {
 
-    private final TestPlanImportService testPlanImportService;
+    private final ProjectImportService projectImportService;
 
-    @Operation(summary = "Import MeuNutria test plan from JSON seed file")
-    @PostMapping("/import-test-plan")
-    public ResponseEntity<Map<String, Object>> importTestPlan(
+    @Operation(summary = "Import a project from a JSON seed file in classpath data/")
+    @PostMapping("/import-project")
+    public ResponseEntity<Map<String, Object>> importProject(
+            @RequestParam String file,
             @AuthenticationPrincipal UserPrincipal currentUser) {
         requireAdmin(currentUser);
 
-        Map<String, Object> result = testPlanImportService.importTestPlan(currentUser.getId());
+        Map<String, Object> result = projectImportService.importProject(file, currentUser.getId());
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "Delete MeuNutria test plan project and all its issues")
-    @DeleteMapping("/import-test-plan")
-    public ResponseEntity<Map<String, Object>> deleteTestPlan(
+    @Operation(summary = "Delete an imported project and all its issues")
+    @DeleteMapping("/import-project/{projectId}")
+    public ResponseEntity<Map<String, Object>> deleteProject(
+            @PathVariable String projectId,
             @AuthenticationPrincipal UserPrincipal currentUser) {
         requireAdmin(currentUser);
 
-        Map<String, Object> result = testPlanImportService.deleteTestPlan();
+        Map<String, Object> result = projectImportService.deleteProject(projectId);
         return ResponseEntity.ok(result);
     }
 
