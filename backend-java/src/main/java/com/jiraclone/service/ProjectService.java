@@ -103,8 +103,13 @@ public class ProjectService {
 
     @Transactional
     public ProjectResponse createProject(ProjectRequest request, UserPrincipal currentUser) {
+        // Generate unique project key
+        String projectKey = generateUniqueProjectKey(request.getName());
+
         Project project = Project.builder()
             .name(request.getName())
+            .key(projectKey)
+            .issueCounter(0)
             .url(request.getUrl())
             .description(request.getDescription())
             .category(request.getCategory())
@@ -172,5 +177,59 @@ public class ProjectService {
             throw new ForbiddenException(
                 "Acesso negado. Requer permissão de admin ou superior.");
         }
+    }
+
+    /**
+     * Generate a unique project key from project name
+     * Examples: "TaskFlow Project" -> "TFP", "My App" -> "MA", "X" -> "X01"
+     */
+    private String generateUniqueProjectKey(String projectName) {
+        // Extract initials from project name (uppercase letters and first letter of words)
+        String baseKey = projectName
+            .replaceAll("[^a-zA-Z\\s]", "") // Remove special chars and numbers
+            .trim()
+            .toUpperCase()
+            .replaceAll("\\s+", " "); // Normalize spaces
+
+        // Get initials from words
+        String[] words = baseKey.split(" ");
+        StringBuilder keyBuilder = new StringBuilder();
+
+        if (words.length == 1) {
+            // Single word: take first 3 chars (e.g., "PROJECT" -> "PRO")
+            keyBuilder.append(words[0].substring(0, Math.min(3, words[0].length())));
+        } else {
+            // Multiple words: take first letter of each word up to 4 letters
+            for (int i = 0; i < Math.min(words.length, 4); i++) {
+                if (!words[i].isEmpty()) {
+                    keyBuilder.append(words[i].charAt(0));
+                }
+            }
+        }
+
+        String candidateKey = keyBuilder.toString();
+
+        // If key is too short, pad or use default
+        if (candidateKey.length() < 2) {
+            candidateKey = candidateKey + "01";
+        }
+
+        // Ensure key is max 10 chars
+        candidateKey = candidateKey.substring(0, Math.min(10, candidateKey.length()));
+
+        // Check if key exists, add numbers if needed
+        String finalKey = candidateKey;
+        int counter = 1;
+        while (projectRepository.existsByKey(finalKey)) {
+            finalKey = candidateKey + counter;
+            counter++;
+            // Prevent infinite loop
+            if (counter > 999) {
+                finalKey = candidateKey + System.currentTimeMillis() % 1000;
+                break;
+            }
+        }
+
+        return finalKey;
     }
 }

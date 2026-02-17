@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ProjectDetailResponse {
     private String id;
+    private String key;
     private String name;
     private String url;
     private String description;
@@ -34,6 +35,7 @@ public class ProjectDetailResponse {
     public static ProjectDetailResponse from(Project project, ProjectRole userRole, List<Issue> issues, List<Permission> permissions) {
         return ProjectDetailResponse.builder()
             .id(project.getId())
+            .key(project.getKey())
             .name(project.getName())
             .url(project.getUrl())
             .description(project.getDescription())

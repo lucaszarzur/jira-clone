@@ -88,7 +88,10 @@ public class DataInitializer implements CommandLineRunner {
     private Project createProject(JsonNode rootNode) {
         Project project = new Project();
         // Don't set ID manually, let Hibernate generate it
-        project.setName(rootNode.get("name").asText());
+        String projectName = rootNode.get("name").asText();
+        project.setName(projectName);
+        project.setKey(generateProjectKey(projectName));
+        project.setIssueCounter(0);
         project.setUrl(rootNode.get("url").asText());
         project.setDescription(rootNode.get("description").asText());
         project.setCategory(ProjectCategory.valueOf(rootNode.get("category").asText().toUpperCase()));
@@ -97,6 +100,50 @@ public class DataInitializer implements CommandLineRunner {
         project.setUpdatedAt(toLocalDateTime(rootNode.get("updatedAt").asText()));
 
         return projectRepository.save(project);
+    }
+
+    /**
+     * Generate a unique project key from project name
+     * Examples: "TaskFlow Project" -> "TFP", "My App" -> "MA"
+     */
+    private String generateProjectKey(String projectName) {
+        String baseKey = projectName
+            .replaceAll("[^a-zA-Z\\s]", "")
+            .trim()
+            .toUpperCase()
+            .replaceAll("\\s+", " ");
+
+        String[] words = baseKey.split(" ");
+        StringBuilder keyBuilder = new StringBuilder();
+
+        if (words.length == 1) {
+            keyBuilder.append(words[0].substring(0, Math.min(3, words[0].length())));
+        } else {
+            for (int i = 0; i < Math.min(words.length, 4); i++) {
+                if (!words[i].isEmpty()) {
+                    keyBuilder.append(words[i].charAt(0));
+                }
+            }
+        }
+
+        String candidateKey = keyBuilder.toString();
+        if (candidateKey.length() < 2) {
+            candidateKey = candidateKey + "01";
+        }
+        candidateKey = candidateKey.substring(0, Math.min(10, candidateKey.length()));
+
+        String finalKey = candidateKey;
+        int counter = 1;
+        while (projectRepository.existsByKey(finalKey)) {
+            finalKey = candidateKey + counter;
+            counter++;
+            if (counter > 999) {
+                finalKey = candidateKey + System.currentTimeMillis() % 1000;
+                break;
+            }
+        }
+
+        return finalKey;
     }
 
     private Map<String, User> createUsers(JsonNode rootNode) {
@@ -120,7 +167,7 @@ public class DataInitializer implements CommandLineRunner {
             user.setAvatarUrl(avatarUrl);
             // Default password for all seed users is "password"
             user.setPassword(passwordEncoder.encode("password"));
-            user.setRole(UserRole.USER);
+            user.setRole("Iron Man".equals(name) ? UserRole.ADMIN : UserRole.USER);
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
 
@@ -158,6 +205,12 @@ public class DataInitializer implements CommandLineRunner {
         for (JsonNode issueNode : issuesNode) {
             Issue issue = new Issue();
             // Don't set ID manually, let Hibernate generate it
+
+            // Generate issue key by incrementing project counter
+            project.setIssueCounter(project.getIssueCounter() + 1);
+            String issueKey = project.getKey() + "-" + project.getIssueCounter();
+            issue.setKey(issueKey);
+
             issue.setTitle(issueNode.get("title").asText());
             issue.setDescription(issueNode.get("description").asText());
             issue.setType(IssueType.valueOf(issueNode.get("type").asText().toUpperCase()));
@@ -194,8 +247,11 @@ public class DataInitializer implements CommandLineRunner {
                 }
             }
 
-            log.debug("Created issue: {}", issue.getTitle());
+            log.debug("Created issue: {} ({})", issueKey, issue.getTitle());
         }
+
+        // Save project with updated counter
+        projectRepository.save(project);
     }
 
     private LocalDateTime toLocalDateTime(String isoDateString) {

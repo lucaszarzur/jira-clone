@@ -23,6 +23,13 @@ public class Project {
     @Column(length = 36)
     private String id;
 
+    @Column(name = "`key`", nullable = false, unique = true, length = 10)
+    private String key;
+
+    @Column(name = "issue_counter", nullable = false)
+    @Builder.Default
+    private Integer issueCounter = 0;
+
     @Column(nullable = false)
     private String name;
 

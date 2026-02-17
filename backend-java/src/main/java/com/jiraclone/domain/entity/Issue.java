@@ -25,6 +25,9 @@ public class Issue {
     @Column(length = 36)
     private String id;
 
+    @Column(name = "`key`", nullable = false, unique = true, length = 20)
+    private String key;
+
     @Column(nullable = false)
     private String title;
 

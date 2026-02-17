@@ -6,7 +6,7 @@
                   [icon]="selectedIssueTypeIcon"
                   [iconSize]="20"
                   [className]="'btn-empty font-semibold uppercase text-textMedium text-13'">
-            {{ issue.type }}-{{issue.id}}
+            {{issue.key}}
         </j-button>
     </ng-container>
 
@@ -14,7 +14,7 @@
         <j-button [icon]="selectedIssueTypeIcon"
                   [iconSize]="20"
                   [className]="'btn-empty font-semibold uppercase text-textMedium text-13'">
-            {{ issue.type }}-{{issue.id}}
+            {{issue.key}}
         </j-button>
     </ng-template>
 </div>

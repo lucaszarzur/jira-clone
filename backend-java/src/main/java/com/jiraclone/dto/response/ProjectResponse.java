@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ProjectResponse {
     private String id;
+    private String key;
     private String name;
     private String url;
     private String description;
@@ -26,6 +27,7 @@ public class ProjectResponse {
     public static ProjectResponse from(Project project) {
         return ProjectResponse.builder()
             .id(project.getId())
+            .key(project.getKey())
             .name(project.getName())
             .url(project.getUrl())
             .description(project.getDescription())

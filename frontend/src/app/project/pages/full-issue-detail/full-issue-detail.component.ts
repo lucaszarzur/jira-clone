@@ -29,9 +29,6 @@ export class FullIssueDetailComponent implements OnInit {
     private _projectService: ProjectService
   ) {
     this.project$ = this._projectQuery.selectActive();
-    this.breadcrumbs$ = this.project$.pipe(
-      map(project => [ProjectConst.Projects, project?.name || '', 'Issues', this.issueId])
-    );
   }
 
   ngOnInit(): void {
@@ -48,6 +45,11 @@ export class FullIssueDetailComponent implements OnInit {
     this.issueId = this.route.snapshot.paramMap.get('issueId');
     if (this.issueId) {
       this.issueById$ = this._projectQuery.issueById$(this.issueId);
+
+      // Update breadcrumbs with issue key
+      this.breadcrumbs$ = this.issueById$.pipe(
+        map(issue => [ProjectConst.Projects, issue?.projectId || '', 'Issues', issue?.key || this.issueId])
+      );
     }
   }
 

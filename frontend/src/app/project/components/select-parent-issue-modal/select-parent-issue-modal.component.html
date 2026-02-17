@@ -28,7 +28,7 @@
           <svg-icon [name]="issue.type.toLowerCase()" [size]="20" class="mr-2"></svg-icon>
           <div class="flex-1">
             <div class="issue-title">{{ issue.title }}</div>
-            <div class="issue-id text-13 text-textMedium">{{ issue.type }}-{{ issue.id }}</div>
+            <div class="issue-id text-13 text-textMedium">{{ issue.key }}</div>
           </div>
           <svg-icon *ngIf="isSelected(issue.id)"
                     name="check"

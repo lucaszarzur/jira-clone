@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class IssueResponse {
     private String id;
+    private String key;
     private String title;
     private IssueType type;
     private IssueStatus status;
@@ -51,6 +52,7 @@ public class IssueResponse {
     @AllArgsConstructor
     public static class SubtaskSummary {
         private String id;
+        private String key;
         private String title;
         private IssueType type;
         private IssueStatus status;
@@ -59,6 +61,7 @@ public class IssueResponse {
         public static SubtaskSummary from(Issue issue) {
             return SubtaskSummary.builder()
                 .id(issue.getId())
+                .key(issue.getKey())
                 .title(issue.getTitle())
                 .type(issue.getType())
                 .status(issue.getStatus())
@@ -70,6 +73,7 @@ public class IssueResponse {
     public static IssueResponse from(Issue issue) {
         return IssueResponse.builder()
             .id(issue.getId())
+            .key(issue.getKey())
             .title(issue.getTitle())
             .type(issue.getType())
             .status(issue.getStatus())
@@ -107,6 +111,7 @@ public class IssueResponse {
     private static IssueResponse fromParent(Issue issue) {
         return IssueResponse.builder()
             .id(issue.getId())
+            .key(issue.getKey())
             .title(issue.getTitle())
             .type(issue.getType())
             .status(issue.getStatus())

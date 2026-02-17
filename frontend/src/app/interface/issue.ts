@@ -41,6 +41,7 @@ export const IssuePriorityColors = {
 };
 export interface SubtaskSummary {
   id: string;
+  key: string;
   title: string;
   type: IssueType;
   status: IssueStatus;
@@ -49,6 +50,7 @@ export interface SubtaskSummary {
 
 export interface ParentIssueSummary {
   id: string;
+  key: string;
   title: string;
   type: IssueType;
   status: IssueStatus;
@@ -58,6 +60,7 @@ export interface ParentIssueSummary {
 
 export interface JIssue {
   id: string;
+  key: string;
   title: string;
   type: IssueType;
   status: IssueStatus;

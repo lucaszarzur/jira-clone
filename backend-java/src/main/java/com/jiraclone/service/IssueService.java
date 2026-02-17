@@ -2,11 +2,13 @@ package com.jiraclone.service;
 
 import com.jiraclone.domain.entity.Issue;
 import com.jiraclone.domain.entity.Permission;
+import com.jiraclone.domain.entity.Project;
 import com.jiraclone.domain.entity.User;
 import com.jiraclone.domain.enums.ProjectRole;
 import com.jiraclone.domain.enums.UserRole;
 import com.jiraclone.domain.repository.IssueRepository;
 import com.jiraclone.domain.repository.PermissionRepository;
+import com.jiraclone.domain.repository.ProjectRepository;
 import com.jiraclone.domain.repository.UserRepository;
 import com.jiraclone.dto.request.ConvertToSubtaskRequest;
 import com.jiraclone.dto.request.IssueRequest;
@@ -32,6 +34,7 @@ public class IssueService {
     private final IssueRepository issueRepository;
     private final UserRepository userRepository;
     private final PermissionRepository permissionRepository;
+    private final ProjectRepository projectRepository;
 
     @Transactional(readOnly = true)
     public List<IssueResponse> getAllIssues() {
@@ -71,7 +74,11 @@ public class IssueService {
         // Validate subtask rules
         validateSubtaskRules(request);
 
+        // Generate issue key
+        String issueKey = generateIssueKey(request.getProjectId());
+
         Issue issue = Issue.builder()
+            .key(issueKey)
             .title(request.getTitle())
             .type(request.getType())
             .status(request.getStatus())
@@ -307,5 +314,29 @@ public class IssueService {
         if (parentIssue.getId().equals(issue.getId())) {
             throw new IllegalArgumentException("Issue cannot be its own parent");
         }
+    }
+
+    /**
+     * Generate unique issue key for a project
+     * Format: {PROJECT_KEY}-{COUNTER}
+     * Example: "TFP-1", "TFP-2", "MNP-42"
+     */
+    private String generateIssueKey(String projectId) {
+        // Get project
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+
+        // Increment counter atomically
+        projectRepository.incrementIssueCounter(projectId);
+
+        // Flush to ensure counter is updated
+        projectRepository.flush();
+
+        // Reload project to get updated counter
+        project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new ResourceNotFoundException("Project", "id", projectId));
+
+        // Generate key: PROJECT_KEY-COUNTER
+        return project.getKey() + "-" + project.getIssueCounter();
     }
 }

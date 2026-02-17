@@ -38,7 +38,7 @@
                            [nzLabel]="issue.title">
                     <div class="flex items-center">
                         <svg-icon [name]="issue.type.toLowerCase()" [size]="16" class="mr-2"></svg-icon>
-                        <span class="text-13">{{ issue.type }}-{{ issue.id }}: {{ issue.title }}</span>
+                        <span class="text-13">{{ issue.key }}: {{ issue.title }}</span>
                     </div>
                 </nz-option>
             </nz-select>

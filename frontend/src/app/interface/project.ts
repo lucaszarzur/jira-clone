@@ -3,6 +3,7 @@ import { JUser } from './user';
 
 export interface JProject {
   id: string;
+  key: string;
   name: string;
   url: string;
   description: string;
